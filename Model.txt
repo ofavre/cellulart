@@ -1,0 +1,15 @@
+class Agent:
+    def requires():
+    def update():
+class AgentProperty: ~~~
+class Percept:
+    def requires():
+    def get():
+class Rule:
+    def requires():
+    def run(agent):
+class Matrix: # ≠ types
+    name
+class World:
+    def init():
+class UI:
