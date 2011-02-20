@@ -24,14 +24,6 @@ class MainGUI(gtk.Window):
 
         self.__world = world
 
-        # Special GtkGLExt initialisation stuff
-        # Disabled because causing a bug on some platform (ATI on Kubuntu 10.10 with Compiz)
-        # May not even be really necessary
-        """if sys.platform != 'win32':
-            self.set_resize_mode(gtk.RESIZE_IMMEDIATE)"""
-        # Redraw if the window has been moved
-        self.set_reallocate_redraws(True)
-
         # Window initialisation
         self.set_title('Cellulart   - - -   By Olivier Favre, Haykel Haddaji, Yassin Patel and Quentin Pradet')
         self.connect('destroy', self.on_destroy)
@@ -62,6 +54,14 @@ class MainGUI(gtk.Window):
         box.pack2(self.scrolledlayers, False, True)
         box.show()
         self.add(box)
+
+        # Special GtkGLExt initialisation stuff
+        # May not even be really necessary
+        if sys.platform != 'win32':
+            # Not to be applied to the window itself, rather to the MatrixWidget's parent (may be the window in that case, yes)
+            box.set_resize_mode(gtk.RESIZE_IMMEDIATE)
+        # Redraw if the window has been moved
+        self.set_reallocate_redraws(True)
 
     def __layers_settings_changed(self, widget):
         """Fired when some parameter controlling the display changed."""

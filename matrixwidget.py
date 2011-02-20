@@ -36,7 +36,7 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         # Widget initialisation
         self.set_size_request(int(math.ceil(max(200,min(640,world.get_shape()[1]*pointsize)))), int(math.ceil(max(150,min(480,world.get_shape()[0]*pointsize)))))
         # Set OpenGL-capability to the drawing area
-        self.set_gl_capability(openglutils.get_glconfig())
+        self.set_gl_capability(openglutils.get_glconfig(), share_list=None, direct=True, render_type=gtk.gdkgl.RGBA_TYPE)
 
         # Connect the relevant signals for the drawing
         self.connect_after('realize',   self.__on_realize)
