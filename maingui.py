@@ -8,6 +8,7 @@ import gtk
 
 from matrixwidget import *
 import openglutils
+from layerswidget import *
 
 
 
@@ -16,10 +17,6 @@ class MainGUI(gtk.Window):
         Currently, only a test for the MatrixWidget is implemented.
         TODO: Conceive a real GUI, eventually with Glade.
               But make sure every main idea is clearly set before.
-        TODO: Have a Gimp-like layer control where each matrix has:
-               - an ordered position, for drawing order
-               - a in/visible toggle button
-               - an alpha slider
     """
 
     def __init__(self, world):
@@ -28,8 +25,8 @@ class MainGUI(gtk.Window):
         self.__world = world
 
         # Special GtkGLExt initialisation stuff
-        if sys.platform != 'win32':
-            self.set_resize_mode(gtk.RESIZE_IMMEDIATE)
+        """if sys.platform != 'win32':
+            self.set_resize_mode(gtk.RESIZE_IMMEDIATE)"""
         self.set_reallocate_redraws(True)
 
         # Window initialisation
@@ -42,14 +39,26 @@ class MainGUI(gtk.Window):
         #
 
         # Matrix that displays the world
-        matrix = MatrixWidget(self.__world, 1)
-        matrix.show()
+        self.matrix = MatrixWidget(self.__world, 1)
+        self.matrix.show()
+        
+        self.scrolledlayers = gtk.ScrolledWindow()
+        self.scrolledlayers.set_property("hscrollbar-policy", gtk.POLICY_NEVER)
+        self.layers = LayersWidget(self.__world)
+        self.layers.show()
+        self.layers.connect("settings-changed", self.__layers_settings_changed)
+        self.scrolledlayers.add(self.layers)
+        self.scrolledlayers.show()
 
         # Pack everything together
-        box = gtk.HBox()
-        box.pack_start(matrix)
+        box = gtk.HPaned()
+        box.pack1(self.matrix, True, False)
+        box.pack2(self.scrolledlayers, False, True)
         box.show()
         self.add(box)
+
+    def __layers_settings_changed(self, widget):
+        self.matrix.queue_draw()
 
     def on_delete(self, widget, event):
         """Called when the window closes.

@@ -11,13 +11,14 @@ class Matrix(numpy.ndarray):
         It is actually a two dimensional array of a given fixed type."""
 
     # See http://docs.scipy.org/doc/numpy/user/basics.subclassing.html
-    def __new__(subclass, name, shape, dtype, track_updates=False):
+    def __new__(subclass, world, index, name, shape, dtype, track_updates=False):
         """ Constructs and initialises a new matrix.
             track_updates: Whether or not to update the colored pixels while modifying the matrix,
                            or only once it is needed (for heavily modified matrices)"""
         # Create a new ndarray
         self = numpy.ndarray.__new__(subclass, shape, dtype)
         # Set local fields
+        self.__world = world
         self.__name = name
         self.__colormap = colors.Colormap()
         self.__colormatrix = numpy.ndarray((shape[0],shape[1],4), numpy.uint8)
@@ -25,6 +26,7 @@ class Matrix(numpy.ndarray):
         self.track_updates = track_updates
         self.visible = False
         self.alpha = 1.0
+        self.__index = index
         return self
     # See http://docs.scipy.org/doc/numpy/user/basics.subclassing.html
     def __array_finalize__(self, obj):
@@ -43,6 +45,15 @@ class Matrix(numpy.ndarray):
     def colormap(self, colormap):
         self.__colormatrix_uptodate = False
         self.__colormap = colormap
+
+    @property
+    def index(self):
+        """Defines the index of the matrix in the matrix stack."""
+        return self.__index
+    @index.setter
+    def index(self, index):
+        index = self.__world._matrix_index_changed(self, self.__index, index)
+        self.__index = index
 
     def get_name(self):
         """Returns the name of the matrix."""

@@ -23,7 +23,7 @@ def get_glconfig():
         # Configure OpenGL framebuffer.
         # Try to get a double-buffered framebuffer configuration,
         # if not successful then try to get a single-buffered one.
-        display_mode = (gtk.gdkgl.MODE_RGB | gtk.gdkgl.MODE_DEPTH | gtk.gdkgl.MODE_DOUBLE)
+        display_mode = (gtk.gdkgl.MODE_RGB | gtk.gdkgl.MODE_ALPHA | gtk.gdkgl.MODE_DEPTH | gtk.gdkgl.MODE_DOUBLE)
         try:
             glconfig = gtk.gdkgl.Config(mode=display_mode)
         except gtk.gdkgl.NoMatches:

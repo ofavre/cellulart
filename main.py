@@ -15,21 +15,10 @@ For now, it creates a test world and launches the main GUI.
 """
 
 # Create a n rows by m columns world
-world = World((240,320))
-
-# Add a test matrix of float
-m = world.add_matrix("test",numpy.float, track_updates=True)
-# Initialise it
-for y in xrange(m.shape[0]):
-    for x in xrange(m.shape[1]):
-        m[y,x] = numpy.random.random()**2
-# Give it a colormap
-m.colormap = LinearGradientColormap(value_min=0, value_max=1, color_min=(255,255,0,255), color_max=(255,0,0,255))
-# Set it to visible
-m.visible = True
+world = World((16,16))
 
 # Add a hidden matrix
-m = world.add_matrix("hidden",numpy.float)
+m = world.add_matrix("hidden",numpy.float, track_updates=False)
 for y in xrange(m.shape[0]):
     for x in xrange(m.shape[1]):
         m[y,x] = numpy.random.random()**2
@@ -50,6 +39,17 @@ m.colormap = LinearGradientColormap(value_min=False, value_max=True, color_min=(
 m.visible = True
 # Let it be translucent
 m.alpha = 0.5
+
+# Add a test matrix of float
+m = world.add_matrix("test",numpy.float, track_updates=True)
+# Initialise it
+for y in xrange(m.shape[0]):
+    for x in xrange(m.shape[1]):
+        m[y,x] = numpy.random.random()**2
+# Give it a colormap
+m.colormap = LinearGradientColormap(value_min=0, value_max=1, color_min=(255,255,0,255), color_max=(255,0,0,255))
+# Set it to visible
+m.visible = True
 
 # Create and launch the main GUI
 gui = MainGUI(world)

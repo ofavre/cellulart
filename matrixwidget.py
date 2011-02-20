@@ -2,7 +2,6 @@
 
 import random
 import math
-import time #TODO: Temporary
 
 import pygtk
 pygtk.require('2.0')
@@ -35,7 +34,7 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         self.__needs_reconfigure = False
 
         # Widget initialisation
-        self.set_size_request(int(math.ceil(min(640,world.get_shape()[1]*pointsize))), int(math.ceil(min(480,world.get_shape()[0]*pointsize))))
+        self.set_size_request(int(math.ceil(max(200,min(640,world.get_shape()[1]*pointsize)))), int(math.ceil(max(150,min(480,world.get_shape()[0]*pointsize)))))
         # Set OpenGL-capability to the drawing area
         self.set_gl_capability(openglutils.get_glconfig())
 
@@ -105,6 +104,14 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         if not gldrawable.gl_begin(glcontext):
             return
 
+        glEnable(GL_TEXTURE_2D)
+        glDisable(GL_TEXTURE_GEN_S)
+        glDisable(GL_TEXTURE_GEN_T)
+        self.iTex = glGenTextures(1)
+        glBindTexture(GL_TEXTURE_2D, self.iTex)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+
         # As we're in 2D, we don't need any depth test
         glDisable(GL_DEPTH_TEST)
         glEnable(GL_BLEND)
@@ -156,70 +163,32 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
             self.__needs_reconfigure = False
 
         # Clear the screen
-        glClear(GL_COLOR_BUFFER_BIT) #(and depth buffer?) | GL_DEPTH_BUFFER_BIT)
+        glClear(GL_COLOR_BUFFER_BIT) #(and depth buffer, when we'll need it) | GL_DEPTH_BUFFER_BIT)
 
         # Draw every matrix
-        for name,m in self.__world.get_matrices().iteritems(): #TODO: Temporary: Luckily "test" gets drawn before "boolean" for the demonstration.
+        for m in reversed(self.__world.get_matrices()):
             # Skip invisible matrices
             if m.visible != True:
                 continue
             pixels = m.get_pixels()
-            if name == "boolean": m.alpha = 0.5+math.sin(time.time())/2 #TODO: Temporary: Pulsate alpha to demonstrate
+
             # Draw every cell
-            if True:
-                # (fast) Moderately good texture way (generation should be done only once)
-                # Custom alpha is ok!
-                glColor4f(1,1,1,m.alpha) # custom alpha is really simple!
-                iTex = glGenTextures(1)
-                glEnable(GL_TEXTURE_2D)
-                glDisable(GL_TEXTURE_GEN_S)
-                glDisable(GL_TEXTURE_GEN_T)
-                glBindTexture(GL_TEXTURE_2D, iTex)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-                glTexImage2Dub(GL_TEXTURE_2D, 0, GL_RGBA, 0, GL_RGBA, pixels)
-                #glTexSubImage2Dub(GL_TEXTURE_2D, 0, 0, 0, GL_RGBA, pixels) # only if glTexImage2D has already initialised the texture
-                glBegin(GL_QUADS)
-                glTexCoord2i(0, 0)
-                glVertex2i(0, 0)
-                glTexCoord2i(1, 0)
-                glVertex2i(0, m.shape[0])
-                glTexCoord2i(1, 1)
-                glVertex2i(m.shape[1], m.shape[0])
-                glTexCoord2i(0, 1)
-                glVertex2i(m.shape[1], 0)
-                glEnd()
-                glDisable(GL_TEXTURE_2D)
-                glDeleteTextures(iTex)
-                glBindTexture(GL_TEXTURE_2D, 0)
-            elif True:
-                # (fast) DrawPixel way
-                # FIXME: Custom alpha is unavailable (or simply broken?)
-                glRasterPos2i(0,0) #FIXME: if negative, nothing will get drawn!
-                glPixelZoom(self.__pointsize, self.__pointsize)
-                glDrawPixelsub(GL_RGBA, pixels) #FIXME: Transposes the matrix
-            elif True:
-                # (slow) Points way
-                # Custom alpha is ok!
-                glPointSize(self.__pointsize)
-                glBegin(GL_POINTS)
-                for y in xrange(0,m.shape[0]):
-                    for x in xrange(0,m.shape[1]):
-                        # Get the according color
-                        c = pixels[y,x]
-                        glColor4ub(c[0], c[1], c[2], int(c[3]*m.alpha))
-                        #glRecti(x,y,x+1,y+1) # remember that the view has already been configured for pan and zoom
-                        glVertex2i(x,y)
-                glEnd()
-            else:
-                # (slower) Rectangles way
-                # Custom alpha is ok!
-                for y in xrange(0,m.shape[0]):
-                    for x in xrange(0,m.shape[1]):
-                        # Get the according color
-                        c = pixels[y,x]
-                        glColor4ub(c[0], c[1], c[2], int(c[3]*m.alpha))
-                        glRecti(x,y,x+1,y+1) # remember that the view has already been configured for pan and zoom
+            # (fast) Moderately good texture way (glTexSubImage2D should be used)
+            glColor4f(1,1,1,m.alpha) # custom alpha is really simple!
+            glTexImage2Dub(GL_TEXTURE_2D, 0, GL_RGBA, 0, GL_RGBA, pixels)
+            #glTexSubImage2Dub(GL_TEXTURE_2D, 0, 0, 0, GL_RGBA, pixels) # only if glTexImage2D has already initialised the texture
+            glBegin(GL_QUADS)
+            glTexCoord2i(0, 0)
+            glVertex2i(0, 0)
+            glTexCoord2i(1, 0)
+            glVertex2i(0, m.shape[0])
+            glTexCoord2i(1, 1)
+            glVertex2i(m.shape[1], m.shape[0])
+            glTexCoord2i(0, 1)
+            glVertex2i(m.shape[1], 0)
+            glEnd()
+            #glDisable(GL_TEXTURE_2D)
+            #glBindTexture(GL_TEXTURE_2D, 0)
 
         # Display the drawing
         if gldrawable.is_double_buffered():
