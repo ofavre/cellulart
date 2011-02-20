@@ -19,6 +19,7 @@ class Matrix(numpy.ndarray):
         self = numpy.ndarray.__new__(subclass, shape, dtype)
         # Set local fields
         self.__world = world
+        self.__index = index
         self.__name = name
         self.__colormap = colors.Colormap()
         self.__colormatrix = numpy.ndarray((shape[0],shape[1],4), numpy.uint8)
@@ -26,7 +27,6 @@ class Matrix(numpy.ndarray):
         self.track_updates = track_updates
         self.visible = False
         self.alpha = 1.0
-        self.__index = index
         return self
     # See http://docs.scipy.org/doc/numpy/user/basics.subclassing.html
     def __array_finalize__(self, obj):
@@ -52,6 +52,7 @@ class Matrix(numpy.ndarray):
         return self.__index
     @index.setter
     def index(self, index):
+        # Asks the world to change our index, and update the other's
         index = self.__world._matrix_index_changed(self, self.__index, index)
         self.__index = index
 

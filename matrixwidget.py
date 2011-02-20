@@ -104,10 +104,12 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         if not gldrawable.gl_begin(glcontext):
             return
 
+        # Generate (one) texture #TODO: Test if one texture by matrix is better
+        self.iTex = glGenTextures(1)
+        # Configure use of textures
         glEnable(GL_TEXTURE_2D)
         glDisable(GL_TEXTURE_GEN_S)
         glDisable(GL_TEXTURE_GEN_T)
-        self.iTex = glGenTextures(1)
         glBindTexture(GL_TEXTURE_2D, self.iTex)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -166,7 +168,7 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         glClear(GL_COLOR_BUFFER_BIT) #(and depth buffer, when we'll need it) | GL_DEPTH_BUFFER_BIT)
 
         # Draw every matrix
-        for m in reversed(self.__world.get_matrices()):
+        for m in reversed(self.__world.get_matrices()): # paint back to front #TODO: Filter for obstructed matrices by an opaque one
             # Skip invisible matrices
             if m.visible != True:
                 continue

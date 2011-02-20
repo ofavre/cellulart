@@ -15,7 +15,9 @@ For now, it creates a test world and launches the main GUI.
 """
 
 # Create a n rows by m columns world
-world = World((16,16))
+world = World((16,16)) #FIXME: Some platform (ATI on Kubuntu 10.10 with Compiz, weird) require a power of 2 here!
+
+# Adding matrices, first are top most, latter are displayed behind
 
 # Add a hidden matrix
 m = world.add_matrix("hidden",numpy.float, track_updates=False)

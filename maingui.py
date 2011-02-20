@@ -25,8 +25,11 @@ class MainGUI(gtk.Window):
         self.__world = world
 
         # Special GtkGLExt initialisation stuff
+        # Disabled because causing a bug on some platform (ATI on Kubuntu 10.10 with Compiz)
+        # May not even be really necessary
         """if sys.platform != 'win32':
             self.set_resize_mode(gtk.RESIZE_IMMEDIATE)"""
+        # Redraw if the window has been moved
         self.set_reallocate_redraws(True)
 
         # Window initialisation
@@ -41,16 +44,19 @@ class MainGUI(gtk.Window):
         # Matrix that displays the world
         self.matrix = MatrixWidget(self.__world, 1)
         self.matrix.show()
-        
+
+        # Matrix-layers display control, with scrollbars
         self.scrolledlayers = gtk.ScrolledWindow()
         self.scrolledlayers.set_property("hscrollbar-policy", gtk.POLICY_NEVER)
         self.layers = LayersWidget(self.__world)
         self.layers.show()
+        # Listen for display changes, to refresh the display
         self.layers.connect("settings-changed", self.__layers_settings_changed)
         self.scrolledlayers.add(self.layers)
         self.scrolledlayers.show()
 
         # Pack everything together
+        # Use a resizeable paned split
         box = gtk.HPaned()
         box.pack1(self.matrix, True, False)
         box.pack2(self.scrolledlayers, False, True)
@@ -58,6 +64,8 @@ class MainGUI(gtk.Window):
         self.add(box)
 
     def __layers_settings_changed(self, widget):
+        """Fired when some parameter controlling the display changed."""
+        # Request a redraw
         self.matrix.queue_draw()
 
     def on_delete(self, widget, event):
