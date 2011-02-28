@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
-from matrix import Matrix
+import matrix
+import modulesreader
 
 import numpy
 
@@ -17,31 +18,38 @@ class World:
         self.__matrices = {} # name to matrix
         self.__matrices_list = [] # front to back matrix drawing order
         self.__matrices_are_updating_index = False # flag indicating whether a grouped index update is being performed
+        self.__agents = {}
+        self.__cellularautomata = {}
+        self.__lsystems = {}
 
     def get_shape(self):
         """Returns the shape (2D-size) of the world."""
         return self.__shape.__class__(self.__shape) # return a copy
 
-    def add_matrix(self, name, dtype, track_updates=False):
-        """ Creates a new named matrix with a given type, if the name is unique.
-            Returns False if the matrix already exists.
-            Returns the newly created matrix otherwise."""
-        # Check for existance of such a named matrix
-        if self.__matrices.has_key(name):
-            return False
-        # Create the new matrix, at the back
-        m = Matrix(self, len(self.__matrices_list), name, self.__shape, dtype, track_updates)
-        self.__matrices_list.append(m)
-        self.__matrices[name] = m
-        return m
+    def get_or_create_matrix(self, name):
+        try:
+            return self.__matrices[name]
+        except KeyError:
+            matrix = modulesreader.ModulesReaderInstance.create_matrix(self, len(self.__matrices_list), name, self.__shape)
+            return self.add_matrix(name, matrix)
+    def add_matrix(self, name, matrix):
+        self.__matrices_list.append(matrix)
+        if matrix.index != len(self.__matrices_list)-1:
+            matrix.index = len(self.__matrices_list)-1
+        self.__matrices[name] = matrix
+        return matrix
 
     def get_matrix(self, name):
         """Returns the matrix of a given name."""
         return self.__matrices[name]
 
-    def get_matrices(self):
+    def get_matrices_list(self):
         """Returns the known matrices."""
         return list(self.__matrices_list) # return a copy of the matrices list (but a reference to the true matrices)
+
+    def get_matrices_dict(self):
+        """Returns the known matrices."""
+        return dict(self.__matrices) # return a copy of the matrices dict (but a reference to the true matrices)
 
     def set_matrix_index(self, name, index):
         """ Modifies the index of a matrix, reodering the necessary ones.
@@ -71,3 +79,33 @@ class World:
         # End of batch update
         self.__matrices_are_updating_index = False
         return new_index
+
+    def get_or_create_agent(self,name):
+        try:
+            return self.__agents[name]
+        except KeyError:
+            agent = modulesreader.ModulesReaderInstance.create_agent(name)
+            return self.add_agent(name, agent)
+    def add_agent(self, name, agent):
+        self.__agents[name] = agent
+        return agent
+
+    def get_or_create_cellularautomaton(self,name):
+        try:
+            return self.__cellularautomata[name]
+        except KeyError:
+            cellularautomaton = modulesreader.ModulesReaderInstance.create_cellularautomaton(name)
+            return self.add_cellularautomaton(name, cellularautomaton)
+    def add_cellularautomaton(self, name, cellularautomaton):
+        self.__cellularautomata[name] = cellularautomaton
+        return cellularautomaton
+
+    def step(self):
+        for matrix in self.__matrices_list:
+            matrix.defer_writes_begin()
+        for name,cellularautomaton in self.__cellularautomata.iteritems():
+            for y in xrange(self.__shape[0]):
+                for x in xrange(self.__shape[1]):
+                    cellularautomaton.run(self, x, y, self.__matrices)
+        for matrix in self.__matrices_list:
+            matrix.defer_writes_end()

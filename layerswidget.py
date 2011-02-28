@@ -17,7 +17,7 @@ class LayersWidget(gtk.TreeView):
 
         # Create and populate the model
         self.model = gtk.ListStore(gobject.TYPE_BOOLEAN,gobject.TYPE_STRING,gobject.TYPE_FLOAT)
-        for m in self.__world.get_matrices():
+        for m in self.__world.get_matrices_list():
             self.model.append((m.visible,m.get_name(),m.alpha))
         self.set_model(self.model)
         self.set_reorderable(True)

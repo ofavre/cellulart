@@ -47,11 +47,20 @@ class MainGUI(gtk.Window):
         self.scrolledlayers.add(self.layers)
         self.scrolledlayers.show()
 
+        # Step button
+        vbox = gtk.VBox()
+        self.stepButton = gtk.Button("Step")
+        self.stepButton.connect("clicked", self.on_step)
+        self.stepButton.show()
+        vbox.pack_start(self.stepButton, False, True)
+        vbox.pack_start(self.scrolledlayers, True, True)
+        vbox.show()
+
         # Pack everything together
         # Use a resizeable paned split
         box = gtk.HPaned()
         box.pack1(self.matrix, True, False)
-        box.pack2(self.scrolledlayers, False, True)
+        box.pack2(vbox, False, True)
         box.show()
         self.add(box)
 
@@ -78,6 +87,10 @@ class MainGUI(gtk.Window):
         Quit the Gtk main loop."""
         gtk.main_quit()
         return True
+
+    def on_step(self, widget):
+        self.__world.step()
+        self.matrix.queue_draw()
 
     def run(self):
         """Shows the window and enters the Gtk main loop until it gets closed."""

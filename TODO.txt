@@ -1,13 +1,13 @@
-Yassin:                         Inventer des règles
+Yassin et Haykel:               Inventer des règles
 Olivier et Quentin:             Définir mieux le modèle, son fonctionnement (requires, modes d'appels, matrices, etc.)
-Olivier:                        Faire l'IHM
-Quentin:                        Boucle principale du monde
+Yassin:                         Faire l'IHM
+Olivier:                        Boucle principale du monde
 
 Intégrer Fractales et/ou L-Systems (pour faire pousser des plantes par ex).
 Communication inter-agents par :
  - phéromones
- - message vocal à portée limitée (avec dégradation en fonction de la distance ?)
- - par talkie-walkie magique
+ - message vocal à portée limitée (avec dégradation (probabilité de non réception, ...) en fonction de la distance ?)
+ - par télépathie à portée illimitée
  - par message écrit laissé sur la map !
 
 Objets (ex messages laissés)

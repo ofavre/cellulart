@@ -124,6 +124,7 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         self.__reconfigure()
 
         gldrawable.gl_end()
+        return True
 
     def __on_configure_event(self, *args):
         """Called whenever the widget changes in size. Refreshes the view configuration."""
@@ -136,7 +137,7 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         self.__reconfigure()
 
         gldrawable.gl_end()
-        return False
+        return True
 
     def __reconfigure(self):
         """Configures the view origin, size and viewport.
@@ -168,7 +169,7 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         glClear(GL_COLOR_BUFFER_BIT) #(and depth buffer, when we'll need it) | GL_DEPTH_BUFFER_BIT)
 
         # Draw every matrix
-        for m in reversed(self.__world.get_matrices()): # paint back to front #TODO: Filter for obstructed matrices by an opaque one
+        for m in reversed(self.__world.get_matrices_list()): # paint back to front #TODO: Filter for obstructed matrices by an opaque one
             # Skip invisible matrices
             if m.visible != True:
                 continue
@@ -200,4 +201,4 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
 
         # OpenGL end
         gldrawable.gl_end()
-        return False
+        return True
