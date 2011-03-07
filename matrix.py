@@ -11,7 +11,7 @@ class Matrix(numpy.ndarray):
         It is actually a two dimensional array of a given fixed type."""
 
     # See http://docs.scipy.org/doc/numpy/user/basics.subclassing.html
-    def __new__(subclass, world, index, name, shape, dtype, track_updates=False):
+    def __new__(subclass, world, index, name, shape, dtype, track_updates, border):
         """ Constructs and initialises a new matrix.
             track_updates: Whether or not to update the colored pixels while modifying the matrix,
                            or only once it is needed (for heavily modified matrices)"""
@@ -28,6 +28,7 @@ class Matrix(numpy.ndarray):
         self.track_updates = track_updates
         self.visible = False
         self.alpha = 1.0
+        self.border_check = border
         return self
     """# See http://docs.scipy.org/doc/numpy/user/basics.subclassing.html
     def __array_finalize__(self, obj):
@@ -61,11 +62,15 @@ class Matrix(numpy.ndarray):
         """Returns the name of the matrix."""
         return str(self.__name) # return a copy
 
+    def __getitem__(self, key):
+        return numpy.ndarray.__getitem__(self, self.border_check(self.shape, *key))
+
     def __setitem__(self, key, value):
         """ Updates the given cell for the given value.
             This methods spies on the modifications on the matrix,
             and updates the colormatrix accordingly if changes are tracked.
             This methods also takes care of deferred writes by recording them."""
+        key = self.border_check(self.shape, *key)
         # Are writes deferred?
         if self.__writes_deferred:
             # Are updates tracked?

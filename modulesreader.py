@@ -13,6 +13,7 @@ class ModulesReader(object):
 
     def __init__(self):
         self.matrices         = [mdl for mdl in pkgutil.iter_modules(['modules/matrices'])]
+        self.matricesborders  = [mdl for mdl in pkgutil.iter_modules(['modules/matrices/borders'])]
         self.cellularautomata = [mdl for mdl in pkgutil.iter_modules(['modules/cellularautomata'])]
         self.lsystems         = [mdl for mdl in pkgutil.iter_modules(['modules/lsystems'])]
         self.agentsstates     = [mdl for mdl in pkgutil.iter_modules(['modules/agents/states'])]
@@ -50,11 +51,18 @@ class ModulesReader(object):
         module = loader.load_module(name)
         return module
 
+    def create_matrix_border(self, name):
+        module = self.get_module(name, self.matricesborders)
+        if module == None:
+            raise Exception("Matrix border module not found: %s" % name)
+        return module.border_check
+
     def create_matrix(self, world, index, name, shape):
         module = self.get_module(name, self.matrices)
         if module == None:
             raise Exception("Matrix module not found: %s" % name)
-        rtn = matrix.Matrix(world, index, name, shape, module.dtype, module.track_updates)
+        border = self.create_matrix_border(module.border)
+        rtn = matrix.Matrix(world, index, name, shape, module.dtype, module.track_updates, border)
         module.init(rtn)
         rtn.visible = module.visible
         rtn.colormap = module.colormap
@@ -115,6 +123,8 @@ if __name__ == "__main__":
     mr = ModulesReaderInstance
     print "Known matrices:"
     print "\n".join([" - "+str(n) for n in mr.matrices])
+    print "Known matrices borders:"
+    print "\n".join([" - "+str(n) for n in mr.matricesborders])
     print "Known cellular automata:"
     print "\n".join([" - "+str(n) for n in mr.cellularautomata])
     print "Known L-systems:"
