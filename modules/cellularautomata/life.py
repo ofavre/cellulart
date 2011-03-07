@@ -2,14 +2,15 @@
 
 required_matrices = ['cellular_binary_life']
 
-def in_matrix(matrice, x, y):
-    return x >= 0 and y >= 0 and x < matrice[0].size and y < matrice[0].size
+def neighbor(matrice, y, x):
+    return matrice[y%matrice.shape[0], x%matrice.shape[0]]
 
 def count_neighbors(matrice, y, x):
     count = 0
-    for i in xrange(-1,2): for j in xrange(-1,2):
-        if in_matrix(matrice, y+i, x+j) and matrice[y+i,x+j]:
-            count += 1
+    for i in xrange(-1,2):
+	for j in xrange(-1,2):
+       		if not (i == 0 and j == 0) and neighbor(matrice, y+i,x+j):
+	            count += 1
     return count
 				
 def run(world, x, y, matrices):

@@ -12,4 +12,10 @@ alpha = 1.0
 def init(matrix):
     for y in xrange(matrix.shape[0]):
         for x in xrange(matrix.shape[1]):
-            matrix[y,x] = random.random() <= 0.3
+            matrix[y,x] = False
+
+    matrix[4,6] = True
+    matrix[5,5] = True
+    matrix[6,5] = True
+    matrix[6,6] = True
+    matrix[6,7] = True
