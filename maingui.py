@@ -34,7 +34,7 @@ class MainGUI(gtk.Window):
         #
 
         # Matrix that displays the world
-        self.matrix = MatrixWidget(self.__world, 1)
+        self.matrix = MatrixWidget(self.__world)
         self.matrix.show()
 
         # Matrix-layers display control, with scrollbars

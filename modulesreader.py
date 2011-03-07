@@ -43,7 +43,6 @@ class ModulesReader(object):
 
     def get_module(self, name, from_list):
         candidates = filter(lambda tupl: tupl[1] == name, from_list)
-        print candidates
         if len(candidates) != 1:
             return None
         importer = candidates[0][0]

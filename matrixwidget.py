@@ -16,8 +16,12 @@ import openglutils
 
 class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
     """OpenGL widget drawing the view of the matrices of the world."""
+    default_max_width  = 640
+    default_max_height = 480
+    default_min_width  = 200
+    default_min_height = 150
 
-    def __init__(self, world, pointsize=1, offset=[0,0]):
+    def __init__(self, world, pointsize=None, offset=None):
         gtk.DrawingArea.__init__(self)
         #gtk.gtkgl.Widget.__init__(self) # (abstract class)
 
@@ -29,12 +33,28 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         self.__pointsize_power_max = +50
         self.__pointsize_factor = 1.1
         self.__pointsize = pointsize # self.__original_pointsize * self.__pointsize_factor ** self.__pointsize_power
-        self.offset = list(offset)
+        self.offset = list(offset) if not offset == None else None
         self.__is_panning = None
         self.__needs_reconfigure = False
 
         # Widget initialisation
-        self.set_size_request(int(math.ceil(max(200,min(640,world.get_shape()[1]*pointsize)))), int(math.ceil(max(150,min(480,world.get_shape()[0]*pointsize)))))
+        # If no pointsize is given, find a good one
+        if self.__original_pointsize == None:
+            self.__original_pointsize = 1
+            w = self.default_max_width  / world.get_shape()[1]
+            h = self.default_max_height / world.get_shape()[0]
+            pw = int(math.log(w) / math.log(self.__pointsize_factor))
+            ph = int(math.log(h) / math.log(self.__pointsize_factor))
+            self.__pointsize_power = max(self.__pointsize_power_min, min(self.__pointsize_power_max, min(pw,ph)))
+            self.__pointsize = self.__original_pointsize * self.__pointsize_factor ** self.__pointsize_power
+        # Request a default size
+        reqw, reqh = int(math.ceil(max(self.default_min_width,min(self.default_max_width,world.get_shape()[1]*self.__pointsize)))), int(math.ceil(max(self.default_min_height,min(self.default_max_height,world.get_shape()[0]*self.__pointsize))))
+        self.set_size_request(reqw, reqh)
+        # Calculate an offset to center the matrices, assuming the default size is the actual size
+        if self.offset == None:
+            mw = reqw - world.get_shape()[1]*self.__pointsize
+            mh = reqh - world.get_shape()[0]*self.__pointsize
+            self.offset = [-int(mh/2), -int(mw/2)]
         # Set OpenGL-capability to the drawing area
         self.set_gl_capability(openglutils.get_glconfig(), share_list=None, direct=True, render_type=gtk.gdkgl.RGBA_TYPE)
 
