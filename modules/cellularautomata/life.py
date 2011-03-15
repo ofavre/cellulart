@@ -14,8 +14,8 @@ def run(world, x, y, matrices):
     cellular_matrix = matrices['cellular_binary_life']
     neighbors = count_neighbors(cellular_matrix,y,x)
     if cellular_matrix[y,x] and neighbors == 2 or neighbors == 3:
-        matrices['cellular_binary_life'][y,x] = True
+        cellular_matrix[y,x] = True
     elif not cellular_matrix[y,x] and neighbors == 3:
-        matrices['cellular_binary_life'][y,x] = True
+        cellular_matrix[y,x] = True
     else:
-        matrices['cellular_binary_life'][y,x] = False
+        cellular_matrix[y,x] = False

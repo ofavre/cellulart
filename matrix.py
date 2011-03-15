@@ -76,11 +76,19 @@ class Matrix(numpy.ndarray):
             # Are updates tracked?
             if self.track_updates:
                 # Record this update (replace any previous update for the same cell)
-                self.__updates[key] = value
+                try:
+                    # If an update has already been recorder, update if it differs (we have it's value at hand anyway)
+                    if self.__updates[key] != value:
+                        self.__updates[key] = value
+                except KeyError:
+                    # If not, record only if it differs from the original value
+                    if numpy.ndarray.__getitem__(self, key) != value:
+                        self.__updates[key] = value
                 return value
             else:
                 # Update the updated copy of the matrix
-                return self.__updates.__setitem__(self, key, value)
+                self.__updates[key] = value
+                return value
         # No deferred writes
         else:
             # No need to track anything if we're not up to date
@@ -121,7 +129,8 @@ class Matrix(numpy.ndarray):
         else:
             # New matrix hosting every changes
             # In case of few cells not being updated, we are creating a full copy
-            self.__updates = self.copy()
+            self.__updates = numpy.ndarray(self.shape, self.dtype)
+            self.__updates.data[:] = self.data
 
     def defer_writes_end(self):
         """Stop deferring the writes to the matrix and apply the recorded writes."""
@@ -135,7 +144,8 @@ class Matrix(numpy.ndarray):
                 self[key] = value
         else:
             # If not, copy the updated matrix back to the matrix
+            self.data[:] = self.__updates.data
             self.__colormatrix_uptodate = False
-            for y in xrange(self.shape[0]):
-                for x in xrange(self.shape[1]):
-                    self[y,x] = self.__update[y,x]
+            #for y in xrange(self.shape[0]):
+            #    for x in xrange(self.shape[1]):
+            #        self[y,x] = self.__updates[y,x]

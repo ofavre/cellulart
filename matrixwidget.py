@@ -188,6 +188,7 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         # Clear the screen
         glClear(GL_COLOR_BUFFER_BIT) #(and depth buffer, when we'll need it) | GL_DEPTH_BUFFER_BIT)
 
+        self.__world.lock_for_drawing()
         # Draw every matrix
         for m in reversed(self.__world.get_matrices_list()): # paint back to front #TODO: Filter for obstructed matrices by an opaque one
             # Skip invisible matrices
@@ -212,6 +213,7 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
             glEnd()
             #glDisable(GL_TEXTURE_2D)
             #glBindTexture(GL_TEXTURE_2D, 0)
+        self.__world.unlock_for_drawing()
 
         # Display the drawing
         if gldrawable.is_double_buffered():

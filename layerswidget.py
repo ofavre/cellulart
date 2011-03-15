@@ -162,7 +162,7 @@ class LayersWidget(gtk.TreeView):
             else:
                 self.__potentially_reordering_end_index -= 1
             # Set the new index of the moved matrix, the rest will be updated accordingly
-            self.__world.get_matrices()[self.__potentially_reordering_begin_index].index = self.__potentially_reordering_end_index
+            self.__world.get_matrices_list()[self.__potentially_reordering_begin_index].index = self.__potentially_reordering_end_index
             # Request display update
             self.emit("settings-changed")
         # End of tracking

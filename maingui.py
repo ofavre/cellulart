@@ -35,7 +35,6 @@ class MainGUI(gtk.Window):
         self.__timer_running = False
         self.__timer_stopEvent = threading.Event()
         self.__timer_drawEvent = threading.Event()
-        self.__stepOrDrawLock = threading.Lock()
         self.__timer_interval = 0.100 # in seconds, ms accuracy
         self.__timer_mode = self.SECONDS_BETWEEN_FRAMES
 
@@ -121,6 +120,8 @@ class MainGUI(gtk.Window):
         We prefer to destroy it."""
         # Stop any timer
         self.__timer_stopEvent.set()
+        # Block the world and for it to be free
+        self.__world.teardown(wait=True)
         return False # ask for destroy instead
 
     def on_destroy(self, widget):
@@ -215,21 +216,15 @@ class MainGUI(gtk.Window):
             self.step_and_draw()
 
     def step(self):
-        """Calculates a frame. Use lock protection to ensure no concurrency."""
-        self.__stepOrDrawLock.acquire()
+        """Calculates a frame."""
         self.__world.step()
-        self.__stepOrDrawLock.release()
     def draw(self):
-        """Draws a frame. Use lock protection to ensure no concurrency."""
-        self.__stepOrDrawLock.acquire()
+        """Draws a frame."""
         self.matrix.queue_draw()
-        self.__stepOrDrawLock.release()
     def step_and_draw(self):
-        """Calculates and draws a frame. Use lock protection to ensure no concurrency."""
-        self.__stepOrDrawLock.acquire()
+        """Calculates and draws a frame."""
         self.__world.step()
         self.matrix.queue_draw()
-        self.__stepOrDrawLock.release()
 
     def run(self):
         """Shows the window and enters the Gtk main loop until it gets closed."""

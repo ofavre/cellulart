@@ -2,5 +2,6 @@
 
 import random
 
-def init():
-    return random.randint(0, 50)
+def init(world):
+    """Age gives the number of remaining iterations."""
+    return random.randint(180, 200)

@@ -1,7 +1,10 @@
 # -*- coding: utf-8 -*-
 
 required_percepts = ['boolean_random']
-required_actions = ['print']
+required_actions = ['print','getolder']
 
-def run(self, percepts, actions):
-    actions['print'](percepts['boolean_random']())
+def run(world, percepts, actions):
+    pvalue = percepts['boolean_random']()
+    actions['getolder']()
+    actions['print'](pvalue)
+    return True

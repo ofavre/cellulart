@@ -20,6 +20,7 @@ class ModulesReader(object):
         self.agentspercepts   = [mdl for mdl in pkgutil.iter_modules(['modules/agents/percepts'])]
         self.agentsactions    = [mdl for mdl in pkgutil.iter_modules(['modules/agents/actions'])]
         self.agentsbrains     = [mdl for mdl in pkgutil.iter_modules(['modules/agents/brains'])]
+        self.agents           = [mdl for mdl in pkgutil.iter_modules(['modules/agents'])]
         #TODO: Better object model
         self.agentsstates_obj = {}
         for mdl in self.agentsstates:
@@ -33,6 +34,12 @@ class ModulesReader(object):
         self.agentsbrains_obj = {}
         for mdl in self.agentsbrains:
             self.agentsbrains_obj[mdl[1]] = self.create_brain(mdl[1])
+        self.agents_obj = {}
+        for mdl in self.agents:
+            if mdl[2]: continue
+            def factory():
+                return self.create_agent(mdl[1])
+            self.agents_obj[mdl[1]] = factory
         self.cellularautomata_obj = {}
         for mdl in self.cellularautomata:
             self.cellularautomata_obj[mdl[1]] = self.create_cellularautomaton(mdl[1])
@@ -62,7 +69,7 @@ class ModulesReader(object):
             raise Exception("Matrix module not found: %s" % name)
         border = self.create_matrix_border(module.border)
         rtn = matrix.Matrix(world, index, name, shape, module.dtype, module.track_updates, border)
-        module.init(rtn)
+        module.init(world, rtn)
         rtn.visible = module.visible
         rtn.colormap = module.colormap
         rtn.alpha = module.alpha
@@ -104,6 +111,17 @@ class ModulesReader(object):
     def get_all_brains(self):
         return self.agentsbrains_obj
 
+    def create_agent(self, world, name):
+        module = self.get_module(name, self.agents)
+        if module == None:
+            raise Exception("Agent module not found: %s" % name)
+        states = dict([(state,self.agentsstates_obj[state]) for state in module.states])
+        brains = [self.agentsbrains_obj[brain] for brain in module.brains]
+        return agent.Agent(world, states, brains)
+
+    def get_all_agents(self):
+        return self.agents_obj
+
     def create_cellularautomaton(self, name):
         module = self.get_module(name, self.cellularautomata)
         if module == None:
@@ -128,6 +146,8 @@ if __name__ == "__main__":
     print "\n".join([" - "+str(n) for n in mr.cellularautomata])
     print "Known L-systems:"
     print "\n".join([" - "+str(n) for n in mr.lsystems])
+    print "Known agents states:"
+    print "\n".join([" - "+str(n) for n in mr.agentsstates])
     print "Known agents percepts:"
     print "\n".join([" - "+str(n) for n in mr.agentspercepts])
     print "Known agents actions:"

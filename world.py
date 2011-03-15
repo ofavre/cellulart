@@ -4,6 +4,7 @@ import matrix
 import modulesreader
 
 import numpy
+import threading
 
 
 
@@ -14,6 +15,9 @@ class World:
 
     def __init__(self, shape):
         """Creates a new, empty world, with a fixed given shape (2D-size)."""
+        self.__step_lock = threading.Lock()
+        self.__draw_lock = threading.Lock()
+        self.__teardown_event = threading.Event()
         self.__shape = shape
         self.__matrices = {} # name to matrix
         self.__matrices_list = [] # front to back matrix drawing order
@@ -80,15 +84,15 @@ class World:
         self.__matrices_are_updating_index = False
         return new_index
 
-    def get_or_create_agent(self,name):
+    def get_or_create_agents(self,name,count):
         try:
             return self.__agents[name]
         except KeyError:
-            agent = modulesreader.ModulesReaderInstance.create_agent(name)
-            return self.add_agent(name, agent)
-    def add_agent(self, name, agent):
-        self.__agents[name] = agent
-        return agent
+            agents = [modulesreader.ModulesReaderInstance.create_agent(self, name) for i in xrange(count)]
+            return self.add_agents(name, agents)
+    def add_agents(self, name, agents):
+        self.__agents[name] = agents
+        return agents
 
     def get_or_create_cellularautomaton(self,name):
         try:
@@ -101,11 +105,52 @@ class World:
         return cellularautomaton
 
     def step(self):
+        """ Calculate the next iteration of the world.
+            This function is thread-safe."""
+        if self.__teardown_event.isSet(): return False
+        # Make sure no other thread will compute a step concurrently
+        self.__step_lock.acquire()
+        # Freeze matrices to their current (old) state
         for matrix in self.__matrices_list:
             matrix.defer_writes_begin()
+        # Make cellular automata step
         for name,cellularautomaton in self.__cellularautomata.iteritems():
             for y in xrange(self.__shape[0]):
                 for x in xrange(self.__shape[1]):
                     cellularautomaton.run(self, x, y, self.__matrices)
+        # Make agents step
+        percepts = modulesreader.ModulesReaderInstance.get_all_percepts()
+        actions = modulesreader.ModulesReaderInstance.get_all_actions()
+        for name,agents in self.__agents.iteritems():
+            if type(agents) != list:
+                agents = [agents]
+            agents_next = []
+            for a in agents:
+                if a.run(self, percepts, actions):
+                    agents_next.append(a)
+            self.__agents[name] = agents_next
+        # Make sure no other thread is accessing the (eventually freezed) matrices, so that we can update them
+        self.__draw_lock.acquire()
+        # Update the matrices to their new state
         for matrix in self.__matrices_list:
             matrix.defer_writes_end()
+        self.__draw_lock.release()
+        self.__step_lock.release()
+
+    def lock_for_drawing(self):
+        """Require that the matrices won't be modified for a drawing phase."""
+        if self.__teardown_event.isSet(): return False
+        self.__draw_lock.acquire()
+    def unlock_for_drawing(self):
+        """Cease requiring that the matrices won't be modified, at the end of a drawing phase."""
+        self.__draw_lock.release()
+
+    def teardown(self, wait=False):
+        """Makes sure we can quit the world, ie if no other thread is working on it."""
+        self.__teardown_event.set()
+        if wait:
+            # Wait for locks to be free
+            self.__step_lock.acquire()
+            self.__draw_lock.acquire()
+            self.__step_lock.release()
+            self.__draw_lock.release()
