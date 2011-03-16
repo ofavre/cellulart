@@ -100,7 +100,7 @@ class Matrix(numpy.ndarray):
                         # Skip any updates (including the last, return line)
                         return value
                     # Update the colormatrix accordingly
-                    self.__colormatrix[key] = self.__colormap(value)
+                    self.__colormatrix[key] = self.__colormap.get_color(value)
                 # Otherwise, we are now no longer up to date
                 else:
                     self.__colormatrix_uptodate = False
@@ -112,10 +112,8 @@ class Matrix(numpy.ndarray):
             Performs a lazy update of changes have not been tracked."""
         # Update the colormatrix if need to
         if not self.__colormatrix_uptodate:
-            for y in xrange(self.shape[0]):
-                for x in xrange(self.shape[1]):
-                    self.__colormatrix[y,x] = self.__colormap(self[y,x])
-            # We are not up to date
+            self.__colormap.convert_matrix(self, self.__colormatrix)
+            # We are now up to date
             self.__colormatrix_uptodate = True
         return self.__colormatrix
 
@@ -141,11 +139,9 @@ class Matrix(numpy.ndarray):
         if self.track_updates:
             # If so, process them individually
             for key,value in self.__updates.iteritems():
-                self[key] = value
+                numpy.ndarray.__setitem__(self, key, value)
+                self.__colormatrix[key] = self.__colormap.get_color(value)
         else:
             # If not, copy the updated matrix back to the matrix
             self.data[:] = self.__updates.data
             self.__colormatrix_uptodate = False
-            #for y in xrange(self.shape[0]):
-            #    for x in xrange(self.shape[1]):
-            #        self[y,x] = self.__updates[y,x]

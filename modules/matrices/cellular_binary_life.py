@@ -6,7 +6,7 @@ import random
 dtype = bool
 track_updates = True
 border = 'wrap'
-colormap = colors.LinearGradientColormap(value_min=False, value_max=True, color_min=(0,0,0,0), color_max=(255,255,255,255))
+colormap = colors.BinaryGradientColormap((0,0,0,0),(255,255,255,255))
 visible = True
 alpha = 1.0
 
