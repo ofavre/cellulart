@@ -72,7 +72,7 @@ class LinearGradientColormap(Colormap):
 
 
 
-class BinaryGradientColormap(Colormap):
+class BinaryBooleanColormap(Colormap):
     """ A basic RGBA colormap with two colors, for boolean values."""
 
     def __init__(self, color_false=(0,0,0,255), color_true=(255,255,255,255)):

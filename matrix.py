@@ -62,8 +62,18 @@ class Matrix(numpy.ndarray):
         """Returns the name of the matrix."""
         return str(self.__name) # return a copy
 
+    def set_modified(self):
+        self.__colormatrix_uptodate = False
+
     def __getitem__(self, key):
-        return numpy.ndarray.__getitem__(self, self.border_check(self.shape, *key))
+        try:
+            # If key is iterable, we are using the [y,x] notation, use border_check
+            it = iter(key)
+            return numpy.ndarray.__getitem__(self, self.border_check(self.shape, *key))
+        except TypeError:
+            # Otherwise, we may be inside a call to str(self) and we should not interfere
+            return numpy.ndarray.__getitem__(self, key)
+
 
     def __setitem__(self, key, value):
         """ Updates the given cell for the given value.

@@ -1,11 +1,28 @@
 # -*- coding: utf-8 -*-
 
+import numpy
+
+
+
 required_matrices = ['trace']
 
-def run(world, x, y, matrices):
+
+
+def run(world, matrices):
     m = matrices['trace']
-    val = 0.0
-    for dx in [-1,0,1]:
-        for dy in [-1,0,1]:
-            val += m[y+dy,x+dx]
-    m[y,x] = (val - m[y,x]*1/10.0) / 9
+    # We need to use a copy for temporary results
+    mean = numpy.ndarray(m.shape, dtype=m.dtype)
+    # Initialize it with the current values, attenuated
+    numpy.multiply(m, 0.95, mean)
+    # Then add after having shifted the lines and columns as needed to iterate over the 8 neigbors
+    numpy.add(mean, numpy.roll(m, -1, axis=0), mean)
+    numpy.add(mean, numpy.roll(m, 1, axis=0), mean)
+    numpy.add(mean, numpy.roll(m, -1, axis=1), mean)
+    numpy.add(mean, numpy.roll(m, 1, axis=1), mean)
+    numpy.add(mean, numpy.roll(numpy.roll(m, -1, axis=0), -1, axis=1), mean)
+    numpy.add(mean, numpy.roll(numpy.roll(m, 1, axis=0), -1, axis=1), mean)
+    numpy.add(mean, numpy.roll(numpy.roll(m, -1, axis=0), 1, axis=1), mean)
+    numpy.add(mean, numpy.roll(numpy.roll(m, 1, axis=0), 1, axis=1), mean)
+    # Finally divide to calculate a mean (and directly overrite the destination matrix)
+    numpy.divide(mean, 9, m)
+    m.set_modified()

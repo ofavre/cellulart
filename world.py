@@ -110,32 +110,26 @@ class World:
         if self.__teardown_event.isSet(): return False
         # Make sure no other thread will compute a step concurrently
         self.__step_lock.acquire()
-        # Freeze matrices to their current (old) state
-        for matrix in self.__matrices_list:
-            matrix.defer_writes_begin()
-        # Make cellular automata step
-        for name,cellularautomaton in self.__cellularautomata.iteritems():
-            for y in xrange(self.__shape[0]):
-                for x in xrange(self.__shape[1]):
-                    cellularautomaton.run(self, x, y, self.__matrices)
-        # Make agents step
-        percepts = modulesreader.ModulesReaderInstance.get_all_percepts()
-        actions = modulesreader.ModulesReaderInstance.get_all_actions()
-        for name,agents in self.__agents.iteritems():
-            if type(agents) != list:
-                agents = [agents]
-            agents_next = []
-            for a in agents:
-                if a.run(self, percepts, actions):
-                    agents_next.append(a)
-            self.__agents[name] = agents_next
-        # Make sure no other thread is accessing the (eventually freezed) matrices, so that we can update them
+        # Make sure no other thread is accessing the matrices, so that we can update them
         self.__draw_lock.acquire()
-        # Update the matrices to their new state
-        for matrix in self.__matrices_list:
-            matrix.defer_writes_end()
-        self.__draw_lock.release()
-        self.__step_lock.release()
+        try:
+            # Make cellular automata step
+            for name,cellularautomaton in self.__cellularautomata.iteritems():
+                cellularautomaton.run(self, self.__matrices)
+            # Make agents step
+            percepts = modulesreader.ModulesReaderInstance.get_all_percepts()
+            actions = modulesreader.ModulesReaderInstance.get_all_actions()
+            for name,agents in self.__agents.iteritems():
+                if type(agents) != list:
+                    agents = [agents]
+                agents_next = []
+                for a in agents:
+                    if a.run(self, percepts, actions):
+                        agents_next.append(a)
+                self.__agents[name] = agents_next
+        finally:
+            self.__step_lock.release()
+            self.__draw_lock.release()
 
     def lock_for_drawing(self):
         """Require that the matrices won't be modified for a drawing phase."""

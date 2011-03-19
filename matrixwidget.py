@@ -41,10 +41,14 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         # If no pointsize is given, find a good one
         if self.__original_pointsize == None:
             self.__original_pointsize = 1
-            w = self.default_max_width  / world.get_shape()[1]
-            h = self.default_max_height / world.get_shape()[0]
-            pw = int(math.log(w) / math.log(self.__pointsize_factor))
-            ph = int(math.log(h) / math.log(self.__pointsize_factor))
+            w = self.default_max_width  / float(world.get_shape()[1])
+            h = self.default_max_height / float(world.get_shape()[0])
+            pw = math.log(w) / math.log(self.__pointsize_factor)
+            ph = math.log(h) / math.log(self.__pointsize_factor)
+            if pw > 0: pw = int(math.ceil(pw))
+            else: pw = int(math.floor(pw))
+            if ph > 0: ph = int(math.ceil(ph))
+            else: ph = int(math.floor(ph))
             self.__pointsize_power = max(self.__pointsize_power_min, min(self.__pointsize_power_max, min(pw,ph)))
             self.__pointsize = self.__original_pointsize * self.__pointsize_factor ** self.__pointsize_power
         # Request a default size

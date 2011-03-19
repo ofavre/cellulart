@@ -4,19 +4,19 @@ import colors
 import random
 
 dtype = bool
-track_updates = True
+track_updates = False
 border = 'wrap'
-colormap = colors.BinaryGradientColormap((0,0,0,0),(255,255,255,255))
+colormap = colors.BinaryBooleanColormap((0,0,0,0),(255,255,255,255))
 visible = True
-alpha = 1.0
+alpha = 0.1
 
 def init(world, matrix):
+    matrix.fill(False)
+    xmax = matrix.shape[1]-1
+    ymax = matrix.shape[0]-1
     for y in xrange(matrix.shape[0]):
-        for x in xrange(matrix.shape[1]):
-            matrix[y,x] = False #random.random() <= 0.3
+        matrix[y,0] = matrix[y,xmax] = True
+    for x in xrange(matrix.shape[1]):
+        matrix[0,x] = matrix[ymax,x] = True
     # A planner
-    matrix[4,6] = True
-    matrix[5,5] = True
-    matrix[6,5] = True
-    matrix[6,6] = True
-    matrix[6,7] = True
+    #matrix[5,5] = matrix[6,6] = matrix[6,7] = matrix[5,7] = matrix[4,7] = True
