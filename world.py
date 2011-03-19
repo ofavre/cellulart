@@ -23,6 +23,7 @@ class World:
         self.__matrices_list = [] # front to back matrix drawing order
         self.__matrices_are_updating_index = False # flag indicating whether a grouped index update is being performed
         self.__agents = {}
+        self.__agents_new = {} # to be added for next step
         self.__cellularautomata = {}
         self.__lsystems = {}
 
@@ -30,12 +31,13 @@ class World:
         """Returns the shape (2D-size) of the world."""
         return self.__shape.__class__(self.__shape) # return a copy
 
-    def get_or_create_matrix(self, name):
-        try:
-            return self.__matrices[name]
-        except KeyError:
-            matrix = modulesreader.ModulesReaderInstance.create_matrix(self, len(self.__matrices_list), name, self.__shape)
-            return self.add_matrix(name, matrix)
+    def create_matrix(self, name):
+        if self.__matrices.has_key(name):
+            raise KeyError("matrix already existing")
+        matrix = modulesreader.ModulesReaderInstance.create_matrix(self, len(self.__matrices_list), name, self.__shape)
+        return self.add_matrix(name, matrix)
+    def get_matrix(self, name):
+        return self.__matrices[name]
     def add_matrix(self, name, matrix):
         self.__matrices_list.append(matrix)
         if matrix.index != len(self.__matrices_list)-1:
@@ -84,22 +86,31 @@ class World:
         self.__matrices_are_updating_index = False
         return new_index
 
-    def get_or_create_agents(self,name,count):
-        try:
-            return self.__agents[name]
-        except KeyError:
-            agents = [modulesreader.ModulesReaderInstance.create_agent(self, name) for i in xrange(count)]
-            return self.add_agents(name, agents)
+    def create_agents(self,name,count):
+        if self.__agents.has_key(name):
+            raise KeyError("agents already existing")
+        agents = [modulesreader.ModulesReaderInstance.create_agent(self, name) for i in xrange(count)]
+        return self.add_agents(name, agents)
+    def get_agents(self,name):
+        return self.__agents.get(name,[])
     def add_agents(self, name, agents):
         self.__agents[name] = agents
         return agents
+    def add_new_agents(self,name,count=1):
+        """ Adds new agents to the world for the next iteration.
+            Return newly constructed and initialized agents, that can be further modified.
+            Callable inside step() by an agent module."""
+        new_agents = [modulesreader.ModulesReaderInstance.create_agent(self, name) for i in xrange(count)]
+        self.__agents_new.setdefault(name, []).extend(new_agents)
+        return new_agents
 
-    def get_or_create_cellularautomaton(self,name):
-        try:
-            return self.__cellularautomata[name]
-        except KeyError:
-            cellularautomaton = modulesreader.ModulesReaderInstance.create_cellularautomaton(name)
-            return self.add_cellularautomaton(name, cellularautomaton)
+    def create_cellularautomaton(self,name):
+        if self.__cellularautomata.has_key(name):
+            raise KeyError("cellular automata already existing")
+        cellularautomaton = modulesreader.ModulesReaderInstance.create_cellularautomaton(name)
+        return self.add_cellularautomaton(name, cellularautomaton)
+    def get_cellularautomaton(self,name):
+        return self.__cellularautomata[name]
     def add_cellularautomaton(self, name, cellularautomaton):
         self.__cellularautomata[name] = cellularautomaton
         return cellularautomaton
@@ -122,10 +133,15 @@ class World:
             for name,agents in self.__agents.iteritems():
                 if type(agents) != list:
                     agents = [agents]
+                # Construct the list of agents for the next iteration
                 agents_next = []
                 for a in agents:
                     if a.run(self, percepts, actions):
+                        # Only add surviving agents
                         agents_next.append(a)
+                # Add newly created agents, for next iteration
+                agents_next.extend(self.__agents_new.get(name,[]))
+                self.__agents_new.clear()
                 self.__agents[name] = agents_next
         finally:
             self.__step_lock.release()

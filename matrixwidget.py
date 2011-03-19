@@ -16,8 +16,8 @@ import openglutils
 
 class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
     """OpenGL widget drawing the view of the matrices of the world."""
-    default_max_width  = 640
-    default_max_height = 480
+    default_max_width  = 1024
+    default_max_height = 768
     default_min_width  = 200
     default_min_height = 150
 
@@ -56,9 +56,9 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         self.set_size_request(reqw, reqh)
         # Calculate an offset to center the matrices, assuming the default size is the actual size
         if self.offset == None:
-            mw = reqw - world.get_shape()[1]*self.__pointsize
-            mh = reqh - world.get_shape()[0]*self.__pointsize
-            self.offset = [-int(mh/2), -int(mw/2)]
+            mw = reqw/self.__pointsize - world.get_shape()[1]
+            mh = reqh/self.__pointsize - world.get_shape()[0]
+            self.offset = [-mh/2, -mw/2]
         # Set OpenGL-capability to the drawing area
         self.set_gl_capability(openglutils.get_glconfig(), share_list=None, direct=True, render_type=gtk.gdkgl.RGBA_TYPE)
 

@@ -3,5 +3,5 @@
 required_states = ['age']
 required_matrices = []
 
-def run(world, matrices, states, *args, **kwargs):
-    states['age'] -= 1
+def run(name, world, matrices, states, older_by=1):
+    states['age'] -= older_by

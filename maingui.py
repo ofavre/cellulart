@@ -35,8 +35,9 @@ class MainGUI(gtk.Window):
         self.__timer_running = False
         self.__timer_stopEvent = threading.Event()
         self.__timer_drawEvent = threading.Event()
-        self.__timer_interval = 0.100 # in seconds, ms accuracy
-        self.__timer_mode = self.SECONDS_BETWEEN_FRAMES
+        self.__timer_interval = 0.0 # in seconds, ms accuracy. Display modes: 0 is full speed, positive is seconds between frames and negative is frames every seconds
+        self.__timer_mode = self.SECONDS_BETWEEN_FRAMES if self.__timer_interval > 0 else self.FULL_SPEED if self.__timer_interval == 0 else self.FRAMES_EVERY_SECONDS
+        self.__timer_interval = abs(self.__timer_interval)
 
         # Window initialisation
         self.set_title('Cellulart   - - -   By Olivier Favre, Haykel Haddaji, Yassin Patel and Quentin Pradet')
@@ -78,7 +79,7 @@ class MainGUI(gtk.Window):
         self.pauseStepButton.connect("clicked", self.on_pauseStep)
         self.pauseStepButton.show()
         # Timing spinner
-        self.speedSpin = DualSpinner(value=int(self.__timer_interval*1000), limit=10000, increment=10, page_increment=100, up_label="ms/frame", down_label="frame every ms", middle_label="(full speed)", initial_position=DualSpinner.UP)
+        self.speedSpin = DualSpinner(value=abs(int(self.__timer_interval*1000)), limit=10000, increment=10, page_increment=100, up_label="ms/frame", down_label="frame every ms", middle_label="(full speed)", initial_position=DualSpinner.UP if self.__timer_mode == self.SECONDS_BETWEEN_FRAMES else DualSpinner.MIDDLE if self.__timer_mode == self.FULL_SPEED else DualSpinner.DOWN)
         self.speedSpin.connect("value-changed", self.on_speed_value_changed)
         self.speedSpin.connect("position-changed", self.on_speed_position_changed)
         self.speedSpin.show()

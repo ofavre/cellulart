@@ -2,7 +2,8 @@
 
 class Agent(object):
     """Represents an agent, with a bunch of brains."""
-    def __init__(self, world, default_states, brains):
+    def __init__(self, name, world, default_states, brains):
+        self.name = name
         self.world = world
         self.states = dict([(name, state.init(world)) for name,state in default_states.iteritems()])
         self.brains = brains
@@ -16,15 +17,15 @@ class Agent(object):
         percept_wrappers = {}
         for n,p in percepts.iteritems():
             #TODO: Implement a mean of the arguments, before calling the actions
-            percept_wrappers[n] = return_state_wrapper(p, world, world.get_matrices_dict(), self.states)
+            percept_wrappers[n] = return_state_wrapper(p, self.name, world, world.get_matrices_dict(), self.states)
         # Wrap actions
         action_wrappers = {}
         for n,a in [(n,a) for n,a in actions.iteritems()]:
-            action_wrappers[n] = return_state_wrapper(a, world, world.get_matrices_dict(), self.states)
+            action_wrappers[n] = return_state_wrapper(a, self.name, world, world.get_matrices_dict(), self.states)
         # Run brains
         dies = False
         for b in self.brains:
-            if not b.run(world, percept_wrappers, action_wrappers):
+            if not b.run(self.name, world, percept_wrappers, action_wrappers):
                 dies = True
         return not dies
 
@@ -59,7 +60,7 @@ class Action(object):
     """Represents an action, with a method to take the action."""
     def __init__(self, run):
         self.run = run
-    def run(self, world, matrices, states, *args, **kwargs):
+    def run(self, name, world, matrices, states, *args, **kwargs):
         """ Takes the action.
             Overridden in the constructor."""
         raise NotImplemented()

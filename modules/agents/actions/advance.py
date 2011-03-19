@@ -5,7 +5,7 @@ import math
 required_states = ['position', 'direction', 'speed']
 required_matrices = []
 
-def run(world, matrices, states, *args, **kwargs):
+def run(name, world, matrices, states, *args, **kwargs):
     # Advance 'speed' cells in the given 'direction'
     y,x = states['position']
     d = states['direction']

@@ -117,7 +117,7 @@ class ModulesReader(object):
             raise Exception("Agent module not found: %s" % name)
         states = dict([(state,self.agentsstates_obj[state]) for state in module.states])
         brains = [self.agentsbrains_obj[brain] for brain in module.brains]
-        return agent.Agent(world, states, brains)
+        return agent.Agent(name, world, states, brains)
 
     def get_all_agents(self):
         return self.agents_obj
