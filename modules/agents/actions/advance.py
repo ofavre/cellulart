@@ -14,8 +14,8 @@ def run(name, world, matrices, states, *args, **kwargs):
     sx = float(sx)
     sy = float(sy)
     # Ensure x and y are (float) within 0 and world's shape x/y
-    y = math.fmod(y + s*math.sin(d), sy)
-    x = math.fmod(x + s*math.cos(d), sx)
+    y = (y + s*math.sin(d)) % sy
+    x = (x + s*math.cos(d)) % sx
     if y < 0: y += sy
     if x < 0: x += sx
     states['position'] = (y,x)

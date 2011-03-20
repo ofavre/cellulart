@@ -21,6 +21,7 @@ class ModulesReader(object):
         self.agentsactions    = [mdl for mdl in pkgutil.iter_modules(['modules/agents/actions'])]
         self.agentsbrains     = [mdl for mdl in pkgutil.iter_modules(['modules/agents/brains'])]
         self.agents           = [mdl for mdl in pkgutil.iter_modules(['modules/agents'])]
+        self.objects          = [mdl for mdl in pkgutil.iter_modules(['modules/objects'])]
         #TODO: Better object model
         self.agentsstates_obj = {}
         for mdl in self.agentsstates:
@@ -122,6 +123,12 @@ class ModulesReader(object):
     def get_all_agents(self):
         return self.agents_obj
 
+    def create_objects(self, world, name):
+        module = self.get_module(name, self.objects)
+        if module == None:
+            raise Exception("Object module not found: %s" % name)
+        return module
+
     def create_cellularautomaton(self, name):
         module = self.get_module(name, self.cellularautomata)
         if module == None:
@@ -154,3 +161,5 @@ if __name__ == "__main__":
     print "\n".join([" - "+str(n) for n in mr.agentsactions])
     print "Known agent brains:"
     print "\n".join([" - "+str(n) for n in mr.agentsbrains])
+    print "Known objects:"
+    print "\n".join([" - "+str(n) for n in mr.objects])

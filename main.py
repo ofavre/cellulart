@@ -7,6 +7,14 @@ from colors import *
 
 import numpy
 
+try:
+    # i386-only optimization with Psyco
+    # NOT TESTED: May be a memory hog and compilation may be a time hog as well!
+    import psyco
+    psyco.full()
+except ImportError:
+    pass
+
 
 
 """
@@ -20,15 +28,20 @@ world = World((256,256)) #FIXME: Some platform (ATI on Kubuntu 10.10 with Compiz
 # Adding matrices, first are top most, latter are displayed behind
 
 # Add a named module matrix
-m = world.create_matrix("trace")
-m = world.create_matrix("cellular_binary_life")
+world.create_matrix("pixels")
+world.create_matrix("trace")
+#world.create_matrix("cellular_binary_life")
 
 # Add a named module cellular automaton
-c = world.create_cellularautomaton("life")
-c = world.create_cellularautomaton("mean_and_evaporate_trace")
+#world.create_cellularautomaton("life")
+world.create_cellularautomaton("evaporate_trace")
 
 # Add agents
-a = world.create_agents("random_walker", 50)
+world.create_agents("treasure_theft", 5)
+world.create_agents("treasure_guard", 10)
+
+# Add a treasure at the center of the map!
+world.create_objects("treasure", 3)
 
 # Create and launch the main GUI
 gui = MainGUI(world)

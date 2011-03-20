@@ -221,11 +221,13 @@ class MainGUI(gtk.Window):
         self.__world.step()
     def draw(self):
         """Draws a frame."""
-        self.matrix.queue_draw()
+        self.__world.wait_for_drawing_to_be_done()
+        self.matrix.queue_redraw()
     def step_and_draw(self):
         """Calculates and draws a frame."""
         self.__world.step()
-        self.matrix.queue_draw()
+        self.__world.wait_for_drawing_to_be_done()
+        self.matrix.queue_redraw()
 
     def run(self):
         """Shows the window and enters the Gtk main loop until it gets closed."""

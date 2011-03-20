@@ -5,7 +5,7 @@ import random
 
 
 
-required_percepts = ['get_age', 'in_smelling_trace', 'neighbor_agents']
+required_percepts = ['get_age', 'in_smelling_trace', 'agentorobject_rangequery']
 required_actions = ['advance','turnabit','trace','getolder','slowdownwithage','eat_cellular_life', 'parthenogenesis', 'turn_toward']
 
 
@@ -27,9 +27,9 @@ def run(name, world, percepts, actions):
     # Draw a trace
     actions['trace']()
     # Get nearest agent
-    neighbors = percepts['neighbor_agents'](count_max=1, dist_min=10, dist_max=40)
+    neighbors = percepts['agentorobject_rangequery'](wrap=True, count_max=1, dist_min=10, dist_max=40)
     try:
-        nearest_neighbor, distance = neighbors[0]
+        nearest_neighbor, distance = neighbors[1] # the first neighbor is forcefully the agent itself
         # Turn toward it
         actions['turn_toward'](*nearest_neighbor.states['position'], max_turn=math.pi/6)
     except IndexError:

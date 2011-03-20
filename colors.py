@@ -96,3 +96,25 @@ class BinaryBooleanColormap(Colormap):
 
     def is_opaque(self):
         return self.color_min[3] == 255 and self.color_max[3] == 255
+
+
+
+class CopyColormap(Colormap):
+    """ A basic colormap that can only work with a special input matrix,
+        formed by the dtype "(4,)uint8" (or equivalent), that simply "copies" the values
+        as they should already form RGBA colors.
+        Remark: It actually replaces colormatrix's data pointer by the original matrix's data pointer,
+                this way no copy is needed, but we may loose a bit of memory and loose any chance to undo the operation."""
+
+    def __init__(self):
+        Colormap.__init__(self)
+
+    def get_color(self, value):
+        return value
+
+    def convert_matrix(self, matrix, colormatrix):
+        # No need to perform a real copy, simply replace the memory pointers!
+        colormatrix.data[:] = matrix.data
+
+    def is_opaque(self):
+        return False # cannot tell True for sure, so say False

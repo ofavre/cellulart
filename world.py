@@ -16,7 +16,8 @@ class World:
     def __init__(self, shape):
         """Creates a new, empty world, with a fixed given shape (2D-size)."""
         self.__step_lock = threading.Lock()
-        self.__draw_lock = threading.Lock()
+        self.__mustdraw_isdone_event = threading.Event()
+        self.__mustdraw_isdone_event.set()
         self.__teardown_event = threading.Event()
         self.__shape = shape
         self.__matrices = {} # name to matrix
@@ -26,6 +27,8 @@ class World:
         self.__agents_new = {} # to be added for next step
         self.__cellularautomata = {}
         self.__lsystems = {}
+        self.__objects_modules = {}
+        self.__objects = {}
 
     def get_shape(self):
         """Returns the shape (2D-size) of the world."""
@@ -36,8 +39,6 @@ class World:
             raise KeyError("matrix already existing")
         matrix = modulesreader.ModulesReaderInstance.create_matrix(self, len(self.__matrices_list), name, self.__shape)
         return self.add_matrix(name, matrix)
-    def get_matrix(self, name):
-        return self.__matrices[name]
     def add_matrix(self, name, matrix):
         self.__matrices_list.append(matrix)
         if matrix.index != len(self.__matrices_list)-1:
@@ -104,6 +105,30 @@ class World:
         self.__agents_new.setdefault(name, []).extend(new_agents)
         return new_agents
 
+    def create_objects(self,name,*args,**kwargs):
+        if self.__objects.has_key(name):
+            raise KeyError("objects already existing")
+        module = modulesreader.ModulesReaderInstance.create_objects(self, name)
+        self.__objects_modules[name] = module
+        # The following call should add any objects to the world by calling add_new_objects, through the object's init method
+        module.init(self,*args,**kwargs)
+    def get_objects(self,name):
+        return self.__objects.get(name,[])
+    def add_new_objects(self,name,objects):
+        module = self.__objects_modules[name]
+        # Warn the objects of their creation, before adding them
+        for obj in objects:
+            module.created(self, obj)
+        # Add them in the list
+        self.__objects.setdefault(name,[]).extend(objects)
+    def remove_objects(self,name,objects):
+        module = self.__objects_modules[name]
+        # Warn the objects of their deletion, before removing them
+        for obj in objects:
+            module.deleted(self, obj)
+        for obj in objects:
+            self.__objects.setdefault(name,[]).remove(obj)
+
     def create_cellularautomaton(self,name):
         if self.__cellularautomata.has_key(name):
             raise KeyError("cellular automata already existing")
@@ -119,10 +144,10 @@ class World:
         """ Calculate the next iteration of the world.
             This function is thread-safe."""
         if self.__teardown_event.isSet(): return False
+        # Make sure no other thread is accessing the matrices, so that we can update them
+        self.__mustdraw_isdone_event.wait()
         # Make sure no other thread will compute a step concurrently
         self.__step_lock.acquire()
-        # Make sure no other thread is accessing the matrices, so that we can update them
-        self.__draw_lock.acquire()
         try:
             # Make cellular automata step
             for name,cellularautomaton in self.__cellularautomata.iteritems():
@@ -143,24 +168,33 @@ class World:
                 agents_next.extend(self.__agents_new.get(name,[]))
                 self.__agents_new.clear()
                 self.__agents[name] = agents_next
+            # Tell objects they are existing
+            for name,objects in self.__objects.iteritems():
+                module = self.__objects_modules[name]
+                for obj in objects:
+                    module.exists(self, obj)
         finally:
             self.__step_lock.release()
-            self.__draw_lock.release()
+
+    def wait_for_drawing_to_be_done(self):
+        if self.__teardown_event.isSet(): return False
+        self.__mustdraw_isdone_event.clear()
 
     def lock_for_drawing(self):
         """Require that the matrices won't be modified for a drawing phase."""
         if self.__teardown_event.isSet(): return False
-        self.__draw_lock.acquire()
+        self.__mustdraw_isdone_event.clear()
+        self.__step_lock.acquire()
     def unlock_for_drawing(self):
         """Cease requiring that the matrices won't be modified, at the end of a drawing phase."""
-        self.__draw_lock.release()
+        self.__step_lock.release()
+        self.__mustdraw_isdone_event.set()
 
     def teardown(self, wait=False):
         """Makes sure we can quit the world, ie if no other thread is working on it."""
         self.__teardown_event.set()
         if wait:
             # Wait for locks to be free
+            self.__mustdraw_isdone_event.set()
             self.__step_lock.acquire()
-            self.__draw_lock.acquire()
             self.__step_lock.release()
-            self.__draw_lock.release()
