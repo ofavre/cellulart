@@ -2,6 +2,10 @@
 
 import random
 import math
+try:
+    import png
+except ImportError:
+    png = False
 
 import pygtk
 pygtk.require('2.0')
@@ -85,7 +89,8 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
     def queue_redraw(self,needs_reconfigure=False):
         """ Requests a redraw of the widget.
             needs_reconfigure: set to True if the offset or the point size has changed."""
-        self.__needs_reconfigure = needs_reconfigure
+        if needs_reconfigure:
+            self.__needs_reconfigure = needs_reconfigure
         self.queue_draw()
 
     def __on_scroll(self, widget, event):
@@ -178,11 +183,14 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
         glMatrixMode(GL_MODELVIEW)
         glLoadIdentity()
 
-    def __on_expose_event(self, *args):
+    def __on_expose_event(self, widget, event, for_export=False):
         gldrawable = self.get_gl_drawable()
         glcontext = self.get_gl_context()
         if not gldrawable.gl_begin(glcontext):
             return False
+
+        if not for_export:
+            self.__world.lock_for_drawing()
 
         # Do differed view configuration updates, now that we are in a drawing context
         if self.__needs_reconfigure:
@@ -190,17 +198,28 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
             self.__needs_reconfigure = False
 
         # Clear the screen
+        if not for_export:
+            glClearColor(0.0, 0.0, 0.0, 1.0)
+        else:
+            glClearColor(0.0, 0.0, 0.0, 0.0)
         glClear(GL_COLOR_BUFFER_BIT) #(and depth buffer, when we'll need it) | GL_DEPTH_BUFFER_BIT)
 
-        self.__world.lock_for_drawing()
-        # Draw every matrix
-        for m in reversed(self.__world.get_matrices_list()): # paint back to front #TODO: Filter for obstructed matrices by an opaque one
+        # Filter for opaque matrices obstructing others behind
+        ordered_and_filtered_matrices = []
+        alpha_min = 1.0/2**8
+        for m in self.__world.get_matrices_list():
             # Skip invisible matrices
-            if m.visible != True:
+            if m.visible != True or m.alpha <= alpha_min:
                 continue
+            ordered_and_filtered_matrices.append(m)
+            if m.colormap.is_opaque():
+                break;
+        ordered_and_filtered_matrices.reverse()
+        # Draw every matrix
+        for m in ordered_and_filtered_matrices:
+            # Paint the matrix
             pixels = m.get_pixels()
-
-            # Draw every cell
+            #TODO: Try PBO (Pixel Buffer Objects) http://www.songho.ca/opengl/gl_pbo.html
             # (fast) Moderately good texture way (glTexSubImage2D should be used)
             glColor4f(1,1,1,m.alpha) # custom alpha is really simple!
             glTexImage2Dub(GL_TEXTURE_2D, 0, GL_RGBA, 0, GL_RGBA, pixels)
@@ -217,14 +236,69 @@ class MatrixWidget(gtk.DrawingArea, gtk.gtkgl.Widget):
             glEnd()
             #glDisable(GL_TEXTURE_2D)
             #glBindTexture(GL_TEXTURE_2D, 0)
-        self.__world.unlock_for_drawing()
+        if not for_export:
+            self.__world.unlock_for_drawing()
 
         # Display the drawing
-        if gldrawable.is_double_buffered():
+        if not for_export and gldrawable.is_double_buffered():
             gldrawable.swap_buffers()
         else:
             glFlush()
 
-        # OpenGL end
-        gldrawable.gl_end()
+        if not for_export:
+            # OpenGL end
+            gldrawable.gl_end()
         return True
+
+    def export_png(self, filename):
+        success = False
+        # Be careful not to break the pipe if anything gets wrong with the (less important) export
+        try:
+            # Test for the PyPNG module availability
+            if png == False:
+                return False
+            # Create a PNG writer
+            outfile = open(filename, "wb")
+            writer = png.Writer(width=self.__world.get_shape()[0], height=self.__world.get_shape()[1], alpha=True, background=(0,0,0), bitdepth=8, compression=9, planes=4)
+            try:
+                # Do external locking, as we're modifying display constants (saves one local lock)
+                self.__world.lock_for_drawing()
+                # Reset offset and pixelsize (not allocation, or the output could be streched)
+                #TODO: Use FBO (Frame Buffer Object) to be able to export more than the display size. @see http://www.songho.ca/opengl/gl_fbo.html
+                #FIXME: Cannot export more than the widget's allocation (display) size. Use FBO.
+                oldoffset = self.offset[:]
+                oldpixelsize = self.__pointsize
+                self.offset = [0,0]
+                self.__pointsize = 1.0
+                self.__needs_reconfigure = True
+                # Draw the scene
+                if self.__on_expose_event(self, None, for_export=True):
+                    # Get the pixels (returns a numpy.ndarray)
+                    pixels = glReadPixelsub(0,0,self.__world.get_shape()[1],self.__world.get_shape()[0],GL_RGBA)
+                    # And write them to the PNG file
+                    writer.write_array(outfile,pixels.flat)
+                    # Finish the left opened (but flushed) OpenGL calls
+                    self.get_gl_drawable().gl_end()
+                    success = True
+            finally:
+                # Restore drawing settings (those who may have been modified)
+                if oldpixelsize: self.__pointsize = oldpixelsize
+                if oldoffset: self.offset = oldoffset[:]
+                # Request a reconfigure
+                self.__needs_reconfigure = True
+                if not success:
+                    # Release the draw lock
+                    self.__world.unlock_for_drawing()
+        except:
+            pass
+        finally:
+            # Close the eventually successfully opened file
+            if outfile: outfile.close()
+            if success:
+                # Redraw right away (as the pixels have been calculated)
+                self.__world.wait_for_drawing_to_be_done()
+                # Release the draw lock
+                self.__world.unlock_for_drawing()
+                # Request a (quickly forecoming) redraw
+                self.queue_redraw(True)
+        return success

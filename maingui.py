@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 
+import os
 import sys
+import time
 import threading
+try:
+    import png
+except ImportError:
+    png = False
 
 import pygtk
 pygtk.require('2.0')
@@ -89,9 +95,37 @@ class MainGUI(gtk.Window):
         controlsBox.pack_start(self.speedSpin, False, True)
         controlsBox.show()
 
+        # Export controls
+        exportBox = None
+        if not png:
+            print >> sys.stderr, "Warn: No export functionnality available because of missing png (PyPNG) module."
+            exportBox = False
+        else:
+            exportBox = gtk.HBox()
+            self.exportButton = gtk.Button("Export")
+            self.exportButton.connect("clicked", self.on_export)
+            self.exportButton.show()
+            self.exportToLabel = gtk.Label(" to ")
+            self.exportToLabel.show()
+            self.exportDir = gtk.Entry()
+            self.exportDir.set_text(os.getcwd())
+            # Place the (invisible) caret at the end, so that the end of the path is visible (the more interesting part of the path)
+            self.exportDir.set_position(len(self.exportDir.get_text()))
+            self.exportDir.show()
+            self.exportBrowseButton = gtk.Button("...")
+            self.exportBrowseButton.connect("clicked", self.on_export_browse)
+            self.exportBrowseButton.show()
+            exportBox.pack_start(self.exportButton, False, True)
+            exportBox.pack_start(self.exportToLabel, False, True)
+            exportBox.pack_start(self.exportDir, True, True)
+            exportBox.pack_start(self.exportBrowseButton, False, True)
+            exportBox.show()
+
         # Right pane
         vbox = gtk.VBox()
         vbox.pack_start(controlsBox, False, True)
+        if exportBox:
+            vbox.pack_start(exportBox, False, True)
         vbox.pack_start(self.scrolledlayers, True, True)
         vbox.show()
 
@@ -228,6 +262,48 @@ class MainGUI(gtk.Window):
         self.__world.step()
         self.__world.wait_for_drawing_to_be_done()
         self.matrix.queue_redraw()
+
+    def on_export(self, widget):
+        """Triggers an export of the image as a PNG file in the export directory, with a unique generated name."""
+        # Validate the export directory
+        exportdir = self.exportDir.get_text()
+        if not os.path.isdir(exportdir):
+            print >> sys.stderr, "Invalid export directory"
+            return
+        # Try filenames
+        prefix = "cellulart-"
+        timetag = time.strftime("%Y%m%dT%H%M%SZ%Z")
+        for i in xrange(0,100):
+            filename = "%s%s-%0.2d.png" % (prefix, timetag, i)
+            filename = os.path.join(exportdir, filename)
+            # Does file already exists
+            if os.path.exists(filename):
+                filename = False # for the if at the end of the for loop
+            else:
+                break
+        if filename == False:
+            print >> sys.stderr, "Could not find a valid filename!"
+        else:
+            # Perform the export
+            if self.matrix.export_png(filename):
+                print "Image exported to", filename
+            else:
+                print >> sys.stderr, "Could not exported image (to %s)!" % filename
+
+    def on_export_browse(self, widget):
+        """Shows the user a directory browing dialog to select the output directory."""
+        # Notice the dialog is for (existing) directory selection
+        chooser = gtk.FileChooserDialog(
+            title="Select the output directory for exported images...",
+            action=gtk.FILE_CHOOSER_ACTION_SELECT_FOLDER,
+            buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK)
+        )
+        chooser.set_filename(self.exportDir.get_text())
+        response = chooser.run()
+        if response == gtk.RESPONSE_OK:
+            # Set the text box to the folder path
+            self.exportDir.set_text(chooser.get_filename())
+        chooser.destroy()
 
     def run(self):
         """Shows the window and enters the Gtk main loop until it gets closed."""
