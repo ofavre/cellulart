@@ -189,15 +189,100 @@
 
   <subsubsection|Gestion des modules>
 
+  Nous manipulons plusieurs composants dans notre projet : des matrices, des
+  automates cellulaires, des systèmes multi-agents, des L-systèmes mais
+  également des objets arbitraires et des moteurs de requêtes. Les systèmes
+  multi-agents sont subdivisés en : états, percepts, actions et cerveaux. Les
+  matrices possèdent plusieurs types de bouclage aux bords. Chacun de ces
+  types de composants fait l'objet d'une ou de plusieurs classes, ainsi que
+  d'une méthode d'instanciation.
+
   <subsection|Modules>
 
-  <subsubsection|Agents>
+  <subsubsection|Matrices>
+
+  Elles ont toutes la même dimension que le monde lui même, mais leur type de
+  donnée peut varier du flottant au quadruplet d'entiers en passant par des
+  objets Python.
+
+  Une matrice possède également des préférences de visualisation (opacité,
+  visibilité, palette de couleurs), mais également un système de bouclage aux
+  bords. En effet nous pouvons avoir envie que le monde soit torique, ou
+  comme un anneau de Mobius.
+
+  Les matrices ont également un code d'initialisation, qui permet par exemple
+  de placer certaines valeurs au centre du monde ou sur certaines lignes.
+
+  Elles représentent bien souvent une plateforme de support pour tous les
+  agents. Lorsqu'une information est beaucoup plus éparse par contre, on
+  utilisera des objets.
 
   <subsubsection|Automates cellulaires>
 
+  Les automates cellulaires eux se branchent sur une ou plusieurs matrices
+  qu'ils peuvent lire ou écrire. Typiquement un automate cellulaire est
+  couplé avec une et une seule matrice dont il gère exclusivement la mise à
+  jour. Beaucoup de calcul matriciel est utilisé ici via NumPy pour optimiser
+  les traitements comme le calcul du nombre de voisins et l'écriture des
+  nouvelles valeurs en fonction de tests booléens. Ceci a beaucoup contribué
+  à l'accélération des traitements, mais les a aussi complexifiés en les
+  rendant moins explicites.
+
+  <subsubsection|Systèmes multi-agents>
+
+  Ce sont des composants très complexes. Chaque agent d'un tel système
+  possède des états, des percepts et des actions disponibles, ainsi qu'un ou
+  plusieurs cerveaux, centres de décision.
+
+  Un agent possède une collection prédéfinie d'états, qui sont initialisés
+  lors de sa naissance, suivant le code donné dans le module représentant
+  ledit état. Les états d'un agent est en réalité un dictionnaire qui peut
+  être très dynamique en taille comme en type de valeurs.
+
+  Les percepts sont des modules qui sont chargés de retourner une valeur
+  particulière, mesure d'une perception de l'agent. Un percept dépend donc
+  des états de l'agent, mais également du monde qui l'entoure, il a donc
+  accès à tout cela.
+
+  Une action est très similaire à un percept dans son implémentation, mais
+  est habité d'un rôle opposé. Une action peut changer un état ou modifier le
+  monde, alors qu'un percept ne doit se contenter que d'y accéder en lecture.
+
+  Si des comportements sont indépendants les uns des autres, ils pourront
+  alors sans problème être implémentés dans plusieurs cerveaux différents.
+  Dans le cas contraire, moyennant une communication entre cerveaux basés sur
+  des états particuliers, il est également possible de séparer des
+  comportements génériques, bien que cela soit plus difficile.
+
   <subsubsection|Objets>
 
+  Des objets arbitraires peuvent être créés, supprimés et modifiés. Le monde
+  possède une liste d'objet d'un type donné -- un simple nom -- que l'on peut
+  récupérer.
+
+  Les objets sont notifiés de leur création, leur suppression mais également
+  du fait qu'ils n'aient été laissé tranquilles. Ceci permet par exemple de
+  tracer un pixel coloré à une certaine position et de le cacher à leur
+  suppression.
+
+  Les objets permettent de stocker une information arbitraire, mais également
+  des objets censés être positionnés dans le monde, sur une matrice, mais
+  dont la quantité ne justifie par une représentation aussi dense en
+  information et difficile à chercher.
+
   <subsubsection|Requêtes>
+
+  Le moteur de requêtes sert à effectuer un prétraitement unique par
+  itération après la mise à jour des automates cellulaires et avant celle des
+  systèmes multi-agents, puis doit répondre à de multiples requêtes, en
+  général une par agent.
+
+  Ce système permet d'améliorer les performances en optant encore une fois
+  pour un point de vue plus macro du problème en construisant une structure
+  optimisée de recherche par exemple, afin de perdre moins de temps à
+  répondre à chaque requête unique centrée sur le point de vue micro d'un
+  l'agent. Il était également nécessaire de suivre le fil des itérations,
+  chose qui n'était faisable qu'en créant un véritable moteur de requêtes.
 
   <section|Agents implémentés>
 
@@ -230,14 +315,14 @@
     <associate|auto-1|<tuple|1|2>>
     <associate|auto-10|<tuple|3.2.3|3>>
     <associate|auto-11|<tuple|3.2.4|3>>
-    <associate|auto-12|<tuple|4|3>>
-    <associate|auto-13|<tuple|4.0.5|3>>
+    <associate|auto-12|<tuple|3.2.5|3>>
+    <associate|auto-13|<tuple|4|3>>
     <associate|auto-14|<tuple|4.0.6|3>>
     <associate|auto-15|<tuple|4.0.7|3>>
     <associate|auto-16|<tuple|4.0.8|3>>
-    <associate|auto-17|<tuple|5|3>>
-    <associate|auto-18|<tuple|6|3>>
-    <associate|auto-19|<tuple|7|?>>
+    <associate|auto-17|<tuple|4.0.9|3>>
+    <associate|auto-18|<tuple|5|3>>
+    <associate|auto-19|<tuple|6|?>>
     <associate|auto-2|<tuple|2|2>>
     <associate|auto-20|<tuple|8|?>>
     <associate|auto-3|<tuple|3|3>>
