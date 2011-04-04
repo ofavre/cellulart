@@ -145,9 +145,47 @@
 
   <section|Implémentation>
 
+  Dans cette section nous allons détailler l'implémentation des diverses
+  fonctionnalités du projet.
+
   <subsection|Coeur>
 
+  Le code étant modulaire, nous allons commencer par décrire la partie
+  commune et la partie gérant les modules.
+
   <subsubsection|Interface graphique>
+
+  Commençons par l'interface graphique, l'endroit le plus facile pour
+  comprendre le programme dans sa globalité.
+
+  Elle est décomposée en 2 parties principales : à gauche la visualisation et
+  à droite les contrôles. La visualisation est basée sur un composant OpenGL,
+  ceci nous permet des manipulations et des compositions rapides des images,
+  telles des zoom et déplacements.
+
+  Les contrôles sont eux décomposés en 3 parties.
+
+  La première ligne gère l'animation avec un bouton play, pause-step et une
+  réglette de vitesse. La vitesse est spécifiée en millisecondes d'attente
+  entre chaque calcul d'itération et d'affichage d'image, ou en millisecondes
+  d'attente entre chaque affichage d'image, le calcul des itérations étant
+  fait en continu, ou bien encore calcul en continu d'une image et affichage,
+  le plus rapidement possible. Le premier mode permet de bien voir le détail
+  de ce qui se passe, le second d'accélérer les calculs en perdant moins de
+  temps à visualiser, le dernier permet de ne rien rater de ce qui se passe
+  en allant le plus vite possible.
+
+  La seconde ligne permet l'exportation de la visualisation en fichier PNG et
+  d'en choisir le dossier de destination. La dernière partie enfin est une
+  liste des différents calques disponibles. Chaque cache est une matrice de
+  valeurs transformée en pixels de couleur. Il est possible d'en gérer
+  l'opacité ainsi que l'ordre d'affichage, par glisser-déposer.
+
+  Nous voyons donc ici le premier concept : l'image affichée est formée de
+  différentes couches, chacune étant une matrice de données qui subit une
+  conversion en pixels. Les pixels et les données sont effectivement
+  totalement dissociés. Une palette de couleur est chargée d'en faire la
+  conversion. Les palettes sont interchangeables.
 
   <subsubsection|Gestion des modules>
 
