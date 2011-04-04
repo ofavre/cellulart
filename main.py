@@ -31,7 +31,7 @@ demos = [
         'flocking birds'
     ]
 
-demo = 'thefts and guards'
+demo = 'flocking birds'
 
 
 if demo == 'moo':
@@ -86,19 +86,19 @@ elif demo == 'thefts and guards':
 
 elif demo == 'flocking birds':
     # Create a n rows by m columns world
-    world = World((256,256)) #FIXME: Some platform (ATI on Kubuntu 10.10 with Compiz, weird) require a power of 2 here!
+    world = World((512,512)) #FIXME: Some platform (ATI on Kubuntu 10.10 with Compiz, weird) require a power of 2 here!
 
     # Adding matrices, first are top most, latter are displayed behind
 
     # Add a named module matrix
     world.create_matrix("pixels")
-    world.create_matrix("trace")
+    world.create_matrix("coloredtrace")
 
     # Add a named module cellular automaton
-    world.create_cellularautomaton("evaporate_trace")
+    #world.create_cellularautomaton("evaporate_trace")
 
     # Add agents
-    world.create_agents("flocking_bird", 50)
+    world.create_agents("flocking_bird", 42)
 
 
 else:
