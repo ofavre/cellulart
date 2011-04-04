@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.3>
+<TeXmacs|1.0.7.9>
 
 <style|generic>
 
@@ -291,7 +291,71 @@
 
   <subsubsection|Jeu de la vie>
 
+  Le jeu de la vie est un grand classique que nous avons pris plaisir à
+  réimplémenter. Il n'y a rien de particulier à expliquer concernant son
+  implémentation : nous mettons à jour la matrice en utilisant les règles
+  dictées par Conway. Nous avons d'abord essayé de faire fonctionner un
+  planneur pour vérifier que le comportement était correct, puis nous avons
+  décidé de faire davantages d'expérimentations.
+
+  Tout l'intérêt du jeu de la vie réside dans l'état initial. Nous avons
+  essayé des états initiaux aléatoires, et il s'avère que ce n'était pas très
+  intéressant. Nous obtenions, après un certain nombre d'itérations, toujours
+  les mêmes motifs. Soit des carrés qui restaient stables, soit des \S lignes
+  \T qui suivaient une rotation de 90<degreesign> à chaque itération. Nous
+  avons cependant trouvé un motif intéressant : à partir de deux \S carrés \T
+  imbriqués, nous avons découvert une suite de sortes d'arabesques
+  remarquables. Peu à peu, l'image se stabilise, avant d'arriver sur un cycle
+  infini.
+
+  Ce qui est intéressant ici c'est de voir à quel point de règles simples et
+  un état initial plutôt simple mène à des comportements dits \S complexes
+  \T, mais a priori pas compliqués.
+
   <subsubsection|Flocking birds>
+
+  Nous avons souhaité poursuivre cette expérience en implémentant un autre
+  système simple. Le principe ici est de simuler le comportement d'une \S
+  nuée \T d'oiseaux, comme on a pu le voir en démonstration en cours. Le
+  principe, communément admis, est plutôt simple : il suffit de trois règles
+  pour implémenter ce comportement. C'est donc un choix attirant : facile
+  pour la première réalisation, un certain nombre de paramètres à étudier, et
+  un résultat amusant. Les trois règles, par ordre d'importance, sont :
+
+  <\itemize-dot>
+    <item>éviter les oiseaux proches (pour ne pas les cogner) ;
+
+    <item>suivre la direction des oiseaux autour (pas que les plus proches) ;
+
+    <item>aller dans la même direction générale qu'eux.
+  </itemize-dot>
+
+  L'implémentation est donc simple : si on est trop proche d'un ou plusieurs
+  oiseaux, on les évite. Sinon, on peut se concentrer sur le fait de suivre
+  les oiseaux aux alentours. Le comportement obtenu est assez réaliste et on
+  pourrait vraiment avoir l'impression de se retrouver dans une nuée.
+  Malheureusement, c'est un comportement qui n'est pas facile à montrer dans
+  un rapport, et on devra ici se contenter des traces laissées par nos
+  oiseaux.
+
+  Il est amusant de constater qu'avec deux oiseaux, c'est un cercle entier
+  qui est réalisé. En effet, la règle d'évitement ne se déclenche pas, et la
+  direction moyenne est défini par un angle constant de rotation. Dans le
+  code, on demande aux agents de se tourner vers la moyenne des positions, ce
+  qui donne toujours le même angle où qu'on soit dans le cercle.
+
+  \<less\>insérer image bigger.png\<gtr\>
+
+  Ce comportement émergent est en quelque sorte un équilibre instable : dès
+  qu'un agent vient perturber nos deux agents, le cercle est cassé et ne se
+  reconstruira plus. On obtient au contraire des sortes de zigzag que l'on
+  aurait pas pu prédire autrement, et qu'il aurait été impossible de deviner
+  en voyant à chaque instant les positions des oiseaux : seule la trace le
+  révèle.
+
+  Encore une fois, c'est précisément ce genre de comportement inattendus et
+  passionants auxquels nous nous attentions avec ce travail : comment
+  produire des comportements complexes avec des règles simples.
 
   <subsubsection|Vaches et herbe>
 
@@ -404,6 +468,10 @@
     Variation de paramètres
   </section>
 
+  <paragraph|Flocking birds>
+
+  <subsubsection|Gardes, voleurs et trésors>
+
   <section|Conclusion>
 </body>
 
@@ -413,6 +481,7 @@
     <associate|page-medium|paper>
     <associate|page-screen-margin|false>
     <associate|page-show-hf|true>
+    <associate|par-hyphen|normal>
   </collection>
 </initial>
 
@@ -420,20 +489,23 @@
   <\collection>
     <associate|auto-1|<tuple|1|2>>
     <associate|auto-10|<tuple|3.2.3|3>>
-    <associate|auto-11|<tuple|3.2.4|3>>
-    <associate|auto-12|<tuple|3.2.5|3>>
-    <associate|auto-13|<tuple|4|3>>
-    <associate|auto-14|<tuple|4.0.6|3>>
-    <associate|auto-15|<tuple|4.0.7|3>>
-    <associate|auto-16|<tuple|4.0.8|3>>
-    <associate|auto-17|<tuple|4.0.9|3>>
-    <associate|auto-18|<tuple|5|3>>
-    <associate|auto-19|<tuple|6|?>>
+    <associate|auto-11|<tuple|3.2.4|4>>
+    <associate|auto-12|<tuple|3.2.5|4>>
+    <associate|auto-13|<tuple|4|4>>
+    <associate|auto-14|<tuple|4.0.6|4>>
+    <associate|auto-15|<tuple|4.0.7|5>>
+    <associate|auto-16|<tuple|4.0.8|5>>
+    <associate|auto-17|<tuple|4.0.9|6>>
+    <associate|auto-18|<tuple|5|7>>
+    <associate|auto-19|<tuple|5.0.9.1|7>>
     <associate|auto-2|<tuple|2|2>>
-    <associate|auto-20|<tuple|8|?>>
-    <associate|auto-3|<tuple|3|3>>
-    <associate|auto-4|<tuple|3.1|3>>
-    <associate|auto-5|<tuple|3.1.1|3>>
+    <associate|auto-20|<tuple|5.0.10|?>>
+    <associate|auto-21|<tuple|6|?>>
+    <associate|auto-22|<tuple|5.0.11|?>>
+    <associate|auto-23|<tuple|6|?>>
+    <associate|auto-3|<tuple|3|2>>
+    <associate|auto-4|<tuple|3.1|2>>
+    <associate|auto-5|<tuple|3.1.1|2>>
     <associate|auto-6|<tuple|3.1.2|3>>
     <associate|auto-7|<tuple|3.2|3>>
     <associate|auto-8|<tuple|3.2.1|3>>
@@ -471,48 +543,53 @@
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-7>>
 
-      <with|par-left|<quote|3fn>|Agents <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|3fn>|Matrices
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-8>>
 
       <with|par-left|<quote|3fn>|Automates cellulaires
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-9>>
 
-      <with|par-left|<quote|3fn>|Objets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <with|par-left|<quote|3fn>|Systèmes multi-agents
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-10>>
+
+      <with|par-left|<quote|3fn>|Objets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-11>>
 
       <with|par-left|<quote|3fn>|Requêtes
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-11>>
+      <no-break><pageref|auto-12>>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Agents
       implémentés> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-12><vspace|0.5fn>
+      <no-break><pageref|auto-13><vspace|0.5fn>
 
       <with|par-left|<quote|3fn>|Jeu de la vie
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-13>>
+      <no-break><pageref|auto-14>>
 
       <with|par-left|<quote|3fn>|Flocking birds
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-14>>
-
-      <with|par-left|<quote|3fn>|Vaches et herbes
-      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-15>>
 
-      <with|par-left|<quote|3fn>|Guardes, voleurs et trésors
+      <with|par-left|<quote|3fn>|Vaches et herbe
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-16>>
+
+      <with|par-left|<quote|3fn>|Gardes, voleurs et trésors
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-17>>
 
       <vspace*|1fn><\with|font-series|<quote|bold>|math-font-series|<quote|bold>>
         Variation de paramètres
       </with> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-17><vspace|0.5fn>
+      <no-break><pageref|auto-18><vspace|0.5fn>
 
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Conclusion>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-18><vspace|0.5fn>
+      <no-break><pageref|auto-19><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
