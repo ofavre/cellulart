@@ -47,18 +47,19 @@ def run(name, world, percepts, actions):
         actions['set_state']('speed', 0.95)
         # Get nearest guards
         dist_max=20
-        guards = percepts['agentorobject_rangequery'](agentorobject_name="treasure_guard", distance=utils.distance(world.get_shape(), utils.WRAP), count_max=5, dist_min=0, dist_max=dist_max)
+        shape = world.get_shape()
+        guards = percepts['agentorobject_rangequery'](agentorobject_name="treasure_guard", distance=utils.distance(shape, utils.WRAP), count_max=5, dist_min=0, dist_max=dist_max)
         if len(guards) > 0:
             mean_position = [0,0]
             weight = 0
             for guard, distance in guards:
                 pos = guard.states['position']
                 distance = dist_max - distance
-                mean_position[0] += pos[0] * distance
-                mean_position[1] += pos[1] * distance
+                mean_position[0] = utils.weighted_sum_wrap(mean_position[0], weight, pos[0], distance, shape[0])
+                mean_position[1] = utils.weighted_sum_wrap(mean_position[1], weight, pos[1], distance, shape[1])
                 weight += distance
             # Flee from them
-            actions['turn_toward'](mean_position[0]/weight, mean_position[1]/weight, wrap=True, get_closer=False, max_turn=math.pi/6)
+            actions['turn_toward'](mean_position[0], mean_position[1], wrap=True, get_closer=False, max_turn=math.pi/6)
         # Add a random turn
         actions['turnabit'](max_turn=math.pi/48)
     # Go on to next position

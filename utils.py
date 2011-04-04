@@ -42,3 +42,12 @@ def distance(world_shape, type=CLASSIC):
         return distance_wrap
     else:
         return None
+
+
+
+def weighted_sum_wrap(value1, weight1, value2, weight2, wrap_length):
+    if value1 < value2 and (value1+wrap_length)-value2 < value2-value1:
+        value1 += wrap_length
+    elif value2 < value1 and (value2+wrap_length)-value1 < value1-value2:
+        value2 += wrap_length
+    return (  (weight1*value1 + weight2*value2) / (weight1+weight2)  ) % wrap_length

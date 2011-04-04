@@ -41,7 +41,8 @@ def run(name, world, percepts, actions):
             pass
     # Get nearest cows
     dist_max=5
-    cows = percepts['agentorobject_rangequery'](agentorobject_name='cow', distance=utils.distance(world.get_shape(), utils.WRAP), count_max=5, dist_min=0, dist_max=dist_max)
+    shape = world.get_shape()
+    cows = percepts['agentorobject_rangequery'](agentorobject_name='cow', distance=utils.distance(shape, utils.WRAP), count_max=5, dist_min=0, dist_max=dist_max)
     if len(cows) > 1:
         del cows[0] # don't count ourself
         # Walk a bit faster
@@ -51,13 +52,13 @@ def run(name, world, percepts, actions):
         for cow, distance in cows:
             pos = cow.states['position']
             distance = dist_max - distance
-            mean_position[0] += pos[0] * distance
-            mean_position[1] += pos[1] * distance
+            mean_position[0] = utils.weighted_sum_wrap(mean_position[0], weight, pos[0], distance, shape[0])
+            mean_position[1] = utils.weighted_sum_wrap(mean_position[1], weight, pos[1], distance, shape[1])
             weight += distance
         position = percepts['get_state']('position')
         # Get opposite, get away from other cows
-        mean_position[0] = 2*position[0] - mean_position[0]/weight
-        mean_position[1] = 2*position[1] - mean_position[1]/weight
+        mean_position[0] = utils.weighted_sum_wrap(position[0], 2, mean_position[0], -1, shape[0])
+        mean_position[1] = utils.weighted_sum_wrap(position[1], 2, mean_position[1], -1, shape[1])
         # If the best food position is inside our area, get closer to it
         if food_position != None:
             food_distance = math.hypot(food_position[0]-position[0], food_position[1]-position[1])
@@ -65,13 +66,8 @@ def run(name, world, percepts, actions):
             max_distance = max(food_distance, mean_distance)
             food_distance = dist_max - food_distance
             mean_distance = 2*(dist_max - mean_distance)
-            weight = food_distance + mean_distance
-            mean_position[0] *= mean_distance
-            mean_position[1] *= mean_distance
-            mean_position[0] += food_position[0] * food_distance
-            mean_position[1] += food_position[1] * food_distance
-            mean_position[0] /= weight
-            mean_position[1] /= weight
+            mean_position[0] = utils.weighted_sum_wrap(mean_position[0], mean_distance, food_position[0], food_distance, shape[0])
+            mean_position[1] = utils.weighted_sum_wrap(mean_position[1], mean_distance, food_position[1], food_distance, shape[1])
         # Get toward food and away from the other cows
         actions['turn_toward'](mean_position[0], mean_position[1], wrap=True, get_closer=True, max_turn=math.pi/6)
     elif food_position != None:
