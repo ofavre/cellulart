@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.3>
+<TeXmacs|1.0.7.9>
 
 <style|generic>
 
@@ -355,7 +355,7 @@
   code, on demande aux agents de se tourner vers la moyenne des positions, ce
   qui donne toujours le même angle où qu'on soit dans le cercle.
 
-  \<less\>insérer image bigger.png\<gtr\>
+  \<less\>insert bigger.png\<gtr\>
 
   Ce comportement émergent est en quelque sorte un équilibre instable : dès
   qu'un agent vient perturber nos deux agents, le cercle est cassé et ne se
@@ -481,6 +481,49 @@
 
   <subsection|Flocking birds>
 
+  Nous avons choisi de commencer l'étude des paramètres avec les oiseaux
+  parce que des réglages ont été faits avant d'obtenir un résultat.
+  Contrairement aux autres programmes, nous avions une idée du résultat, et
+  il était possible d'itérer jusqu'à être satisfait.
+
+  Il y a deux types de paramètres sur lesquels nous avons influés : la
+  rotation maximum et les rayons de vision de nos oiseaux.
+
+  La rotation maximum exprime le tournant qu'un oiseau peut réaliser pour
+  satisfaire une contrainte. Par exemple, pour s'éloigner des oiseaux trop
+  proches, il est interdit de faire un demi-tour complet.
+
+  Le rayon de vision intérieur détermine les oiseaux qui sont considérés
+  comme gênants et le rayon de vision extérieur détermine les oiseaux
+  considérés comme étant à suivre.
+
+  La rotation maximum a été limitée pour éviter les retours intempestifs en
+  arrière qu'un oiseau réel est incapable de faire. Il a fallu autoriser un
+  angle plus important pour les répulsions locales : c'est une réaction plus
+  forte, destinée à rétablir l'ordre. La rotation qui fait aller vers la
+  position moyenne est plus faible, mais pas trop : celà doit correspondre à
+  un tournant moyen pour un oiseau. La rotation pour suivre la direction
+  moyenne est encore plus faible, pour ne correspondre qu'à un faible
+  ajustement. Sans ces valeurs, les mouvements étaient insensés et n'avaient
+  pas de réel correspondance.
+
+  Pour le rayon de vision, nous avons finalement décidé d'avoir un rayon
+  compris entre 0.1 et 3 pour le rayon interne. Cela permet de ne pas se
+  prendre en compte soi-même et d'éviter les menaces locales. Un rayon entre
+  3 et 20 s'est avéré satisfaisant pour le rayon externe. Celà n'empêche pas
+  que de groupes plus gros se forment, mais il arrive que ces groupes se
+  cassent et se reforment, ce qui semble extrêmement naturel.
+
+  Il est très difficile d'expliquer ceci en image, étant donné que ce sont de
+  comportements dynamiques, qu'il faut voir en mouvement, et que nous étions
+  satisfaits lorsque ça "avait l'air" bien, sans pouvoir l'exprimer.
+
+  Enfin, la modification de paramètre la plus amusante aura été le fait de
+  changer la vitesse lors de la répulsion locale pour permettre aux oiseaux
+  de s'échapper le plus vite possible. Cela donne l'impression que nos
+  oiseaux deviennent des poissons, qui sont capable tout d'un cop d'accélerer
+  pour rester dans le banc ou éviter un prédateur.
+
   <subsection|Gardes, voleurs et trésors>
 
   Regardons plus en détail l'astuce permettant d'éviter des boucles
@@ -495,8 +538,8 @@
   et 1. On a donc :
 
   <\equation*>
-    <with|mode|text|<em|speed>> = min<left|(>1.00, \ max<left|(><rsub|>0.00,
-    \ <with|mode|text|<em|distance>>-\<varepsilon\><right|)><right|)>
+    <text|<em|speed>> = min<around*|(|1.00, \ max<around*|(|<rsub|>0.00,
+    \ <text|<em|distance>>-\<varepsilon\>|)>|)>
   </equation*>
 
   Voici les différents résultats obtenus pour des valeurs de
@@ -515,7 +558,7 @@
   modulaire et riche en fonctionnalités, tout en gardant de bonnes
   performances malgré l'utilisation d'un langage interprété.
 
-  Notre projet est libre et disponible sous licence BSD. Nous espéront que
+  Notre projet est libre et disponible sous licence BSD. Nous espérons que
   cette disponibilité libre ainsi que la modularité et la multitude de
   fonctionnalités intéresseront d'autres personnes à la recherche d'une
   plateforme de simulation ou d'art numérique !
@@ -547,9 +590,10 @@
     <associate|auto-2|<tuple|2|2>>
     <associate|auto-20|<tuple|5.2|7>>
     <associate|auto-21|<tuple|1|7>>
-    <associate|auto-22|<tuple|2|7>>
-    <associate|auto-23|<tuple|3|7>>
-    <associate|auto-24|<tuple|6|7>>
+    <associate|auto-22|<tuple|2|8>>
+    <associate|auto-23|<tuple|3|8>>
+    <associate|auto-24|<tuple|6|8>>
+    <associate|auto-25|<tuple|6|?>>
     <associate|auto-3|<tuple|3|2>>
     <associate|auto-4|<tuple|3.1|2>>
     <associate|auto-5|<tuple|3.1.1|2>>
