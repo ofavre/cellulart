@@ -30,7 +30,7 @@ demos = [
         'flocking birds'
     ]
 
-demo = 'moo'
+demo = 'thefts and guards'
 
 
 if demo == 'moo':
@@ -73,17 +73,14 @@ elif demo == 'thefts and guards':
 
     # Add a named module matrix
     world.create_matrix("pixels")
-    world.create_matrix("trace")
-
-    # Add a named module cellular automaton
-    world.create_cellularautomaton("evaporate_trace")
+    world.create_matrix("coloredtrace")
 
     # Add agents
-    world.create_agents("treasure_theft", 5)
-    world.create_agents("treasure_guard", 10)
+    world.create_agents("treasure_theft", 50)
+    world.create_agents("treasure_guard", 100)
 
     # Add a treasure at the center of the map!
-    world.create_objects("treasure", 3)
+    world.create_objects("treasure", 30)
 
 
 elif demo == 'flocking birds':

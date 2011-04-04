@@ -34,7 +34,7 @@ def average_position(long_range, world, actions):
 
 def run(name, world, percepts, actions):
     # Hide our old position
-    actions['set_pixel']((0,0,0,0))
+    actions['set_pixel'](color=(0,0,0,0))
     actions['set_state']('speed', 1.00)
     short_range = percepts['agentorobject_rangequery'](agentorobject_name="flocking_bird", count_max=1000, dist_min=2, dist_max=10, distance=utils.distance(world.get_shape(), utils.WRAP))
     long_range = percepts['agentorobject_rangequery'](agentorobject_name="flocking_bird", count_max=1000, dist_min=3, dist_max=20, distance=utils.distance(world.get_shape(), utils.WRAP))
@@ -49,6 +49,6 @@ def run(name, world, percepts, actions):
     actions['advance']()
     actions['trace']()
     # Mark our current position
-    actions['set_pixel']((0,255,255,255))
+    actions['set_pixel'](color=(0,255,255,255))
     # Survive
     return True

@@ -7,13 +7,13 @@ import utils
 
 
 required_percepts = ['get_state']
-required_actions = ['set_state','advance','turnabit','turn_toward']
+required_actions = ['set_state','set_coloredtrace','advance','turnabit','turn_toward']
 
 
 
 def run(name, world, percepts, actions):
     # Hide our old position
-    actions['set_pixel']((0,0,0,0))
+    actions['set_pixel'](color=(0,0,0,0))
     default_walk = False
     has_treasure = percepts['get_state']('treasure', False)
     if has_treasure == False:
@@ -22,7 +22,7 @@ def run(name, world, percepts, actions):
         try:
             theft, distance = thefts[0]
             # Add a trace
-            actions['trace']()
+            actions['set_coloredtrace']()
             # Are we close enough to catch him?
             if distance < 1:
                 # Take treasure away from him
@@ -73,6 +73,6 @@ def run(name, world, percepts, actions):
     # Go on to next position
     actions['advance']()
     # Mark our current position
-    actions['set_pixel']((0,255,0,255))
+    actions['set_pixel'](color=(0,255,0,255))
     # Survive
     return True

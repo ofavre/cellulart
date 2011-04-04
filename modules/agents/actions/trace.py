@@ -10,8 +10,13 @@ required_matrices = ['trace']
 
 
 def run(name, world, matrices, states, y=None, x=None, opacity=1.0):
-    if y == None or x == None:
-        y,x = states['position']
+    if y == None:
+        pos = states['position']
+        y = pos[0]
+        if x == None:
+            x = pos[1]
+    elif x == None:
+        x = states['position'][1]
     iy = int(y)
     ix = int(x)
     rx = x % 1.0

@@ -14,7 +14,7 @@ required_actions = ['set_state','advance','turnabit','turn_toward']
 
 def run(name, world, percepts, actions):
     # Hide our old position
-    actions['set_pixel']((0,0,0,0))
+    actions['set_pixel'](color=(0,0,0,0))
     # Seeking a treasure or fleeing away from the guards?
     has_treasure = percepts['get_state']('treasure', False)
     if has_treasure == False:
@@ -63,6 +63,6 @@ def run(name, world, percepts, actions):
     # Go on to next position
     actions['advance']()
     # Mark our current position
-    actions['set_pixel']((255,0,0,255))
+    actions['set_pixel'](color=(255,0,0,255))
     # Survive
     return True

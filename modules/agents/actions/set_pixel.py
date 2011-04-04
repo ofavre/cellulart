@@ -5,7 +5,9 @@ required_matrices = ['pixels']
 
 
 
-def run(name, world, matrices, states, rgba_color, y=None, x=None):
+def run(name, world, matrices, states, y=None, x=None, color=None):
+    if color == None:
+        color = states['color']
     if y == None:
         pos = states['position']
         y = pos[0]
@@ -13,4 +15,4 @@ def run(name, world, matrices, states, rgba_color, y=None, x=None):
             x = pos[1]
     elif x == None:
         x = states['position'][1]
-    matrices['pixels'][int(y),int(x)] = rgba_color
+    matrices['pixels'][int(y),int(x)] = color

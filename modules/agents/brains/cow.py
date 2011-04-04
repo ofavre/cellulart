@@ -17,7 +17,7 @@ def run(name, world, percepts, actions):
     # Eat the grass under our feet
     actions['eat_cellular_grass']()
     # Hide our old position
-    actions['set_pixel']((0,0,0,0))
+    actions['set_pixel'](color=(0,0,0,0))
     # Walk
     actions['set_state']('speed', 0.45)
     # Go to the closest cell with food, within a small radius
@@ -84,7 +84,7 @@ def run(name, world, percepts, actions):
     # Go on to next position
     actions['advance']()
     # Mark our current position
-    actions['set_pixel']((255,255,255,255))
+    actions['set_pixel'](color=(255,255,255,255))
     # Trace
     actions['trace'](opacity=0.1)
     # Survive
