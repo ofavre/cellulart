@@ -345,7 +345,7 @@ class DualSpinner(gtk.HBox):
         # The spinner works with a gtk.Adjustment that ranges from -limit to limit (even though only negative values are allowed, so that we can detect when it changes modes).
         # We can also use a negative increment to reverse the direction of scroll/spin to use the same direction for decreasing the values for "positives" mode and increaseing the values inside "negatives" mode.
         self.__position = (DualSpinner.DOWN if initial_position < 0 else DualSpinner.UP if initial_position > 0 else DualSpinner.MIDDLE)
-        self.__adj = gtk.Adjustment(value=value, lower=-limit, upper=limit, step_incr=(-increment if initial_position < 0 else increment), page_incr=page_increment, page_size=0)
+        self.__adj = gtk.Adjustment(value=value, lower=-limit, upper=limit, step_incr=(increment if initial_position < 0 else -increment), page_incr=page_increment, page_size=0)
         self.__spin = gtk.SpinButton(self.__adj)
         self.__spin.connect("value-changed", self.__on_value_changed)
         self.__spin.show()
@@ -367,23 +367,22 @@ class DualSpinner(gtk.HBox):
         """Handles the change of value and eventually change the position, adjustment's direction and sign of the value."""
         # 0 mode
         if widget.get_value() == 0:
+            self.__adj.set_step_increment(-abs(self.__adj.get_step_increment()))
             self.__label.set_text(self.__middle_label)
             self.__position = DualSpinner.MIDDLE
             self.emit("position-changed", DualSpinner.MIDDLE)
-        # (Eventual) Change of mode: getting negative, or reincreasing from 0
-        elif widget.get_value() < 0 or (self.__position == DualSpinner.MIDDLE and widget.get_value() > 0):
+        # (Eventual) Change of mode: getting negative
+        elif widget.get_value() < 0:
             widget.set_value(abs(widget.get_value()))
-            # Detect the mode from the adjustement's increment sign
-            if self.__adj.get_step_increment() < 0:
-                self.__adj.set_step_increment(-self.__adj.get_step_increment())
-                self.__label.set_text(self.__up_label)
-                self.__position = DualSpinner.UP
-                self.emit("position-changed", DualSpinner.UP)
-            elif self.__adj.get_step_increment() > 0:
-                self.__adj.set_step_increment(-self.__adj.get_step_increment())
-                self.__label.set_text(self.__down_label)
-                self.__position = DualSpinner.DOWN
-                self.emit("position-changed", DualSpinner.DOWN)
+            self.__adj.set_step_increment(-self.__adj.get_step_increment())
+            self.__label.set_text(self.__up_label)
+            self.__position = DualSpinner.UP
+            self.emit("position-changed", DualSpinner.UP)
+        # (Eventual) Change of mode: reincreasing from 0
+        elif self.__position == DualSpinner.MIDDLE and widget.get_value() > 0:
+            self.__label.set_text(self.__down_label)
+            self.__position = DualSpinner.DOWN
+            self.emit("position-changed", DualSpinner.DOWN)
         # Transmit the value-changed event
         self.emit("value-changed", widget.get_value())
 

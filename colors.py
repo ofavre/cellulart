@@ -95,7 +95,7 @@ class BinaryBooleanColormap(Colormap):
         colormatrix.data[:] = numpy.where(matrix.reshape((matrix.shape[0], matrix.shape[1], 1)), choice[1], choice[0]).data
 
     def is_opaque(self):
-        return self.color_min[3] == 255 and self.color_max[3] == 255
+        return self.color_false[3] == 255 and self.color_true[3] == 255
 
 
 

@@ -140,6 +140,9 @@ class World:
         self.__cellularautomata[name] = cellularautomaton
         return cellularautomaton
 
+    def get_query(self, name):
+        return modulesreader.ModulesReaderInstance.get_all_queries()[name]
+
     def step(self):
         """ Calculate the next iteration of the world.
             This function is thread-safe."""
@@ -149,6 +152,9 @@ class World:
         # Make sure no other thread will compute a step concurrently
         self.__step_lock.acquire()
         try:
+            # Reset all the queries
+            for name,query in modulesreader.ModulesReaderInstance.get_all_queries().iteritems():
+                query.run(self)
             # Make cellular automata step
             for name,cellularautomaton in self.__cellularautomata.iteritems():
                 cellularautomaton.run(self, self.__matrices)

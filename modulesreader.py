@@ -4,6 +4,7 @@
 import matrix
 import cellularautomaton
 import agent
+import query
 
 import pkgutil
 
@@ -22,6 +23,7 @@ class ModulesReader(object):
         self.agentsbrains     = [mdl for mdl in pkgutil.iter_modules(['modules/agents/brains'])]
         self.agents           = [mdl for mdl in pkgutil.iter_modules(['modules/agents'])]
         self.objects          = [mdl for mdl in pkgutil.iter_modules(['modules/objects'])]
+        self.queries          = [mdl for mdl in pkgutil.iter_modules(['modules/queries'])]
         #TODO: Better object model
         self.agentsstates_obj = {}
         for mdl in self.agentsstates:
@@ -44,6 +46,9 @@ class ModulesReader(object):
         self.cellularautomata_obj = {}
         for mdl in self.cellularautomata:
             self.cellularautomata_obj[mdl[1]] = self.create_cellularautomaton(mdl[1])
+        self.queries_obj = {}
+        for mdl in self.queries:
+            self.queries_obj[mdl[1]] = self.create_query(mdl[1])
 
     def get_requirements(self):
         #TODO
@@ -139,6 +144,15 @@ class ModulesReader(object):
     def get_all_cellularautomata(self):
         return self.cellularautomata_obj
 
+    def create_query(self, name):
+        module = self.get_module(name, self.queries)
+        if module == None:
+            raise Exception("Queries module not found: %s" % name)
+        return query.Query(module.run, module.query)
+
+    def get_all_queries(self):
+        return self.queries_obj
+
 ModulesReaderInstance = ModulesReader()
 
 
@@ -163,3 +177,5 @@ if __name__ == "__main__":
     print "\n".join([" - "+str(n) for n in mr.agentsbrains])
     print "Known objects:"
     print "\n".join([" - "+str(n) for n in mr.objects])
+    print "Known queries:"
+    print "\n".join([" - "+str(n) for n in mr.queries])
