@@ -1,4 +1,4 @@
-<TeXmacs|1.0.7.9>
+<TeXmacs|1.0.7.3>
 
 <style|generic>
 
@@ -52,44 +52,55 @@
     <with|par-left|1.5fn|Modules <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-7>>
 
-    <with|par-left|3fn|Agents <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|3fn|Matrices <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-8>>
 
     <with|par-left|3fn|Automates cellulaires
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-9>>
 
-    <with|par-left|3fn|Objets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|3fn|Systèmes multi-agents
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-10>>
 
-    <with|par-left|3fn|Requêtes <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|3fn|Objets <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-11>>
+
+    <with|par-left|3fn|Requêtes <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-12>>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Agents
     implémentés> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-12><vspace|0.5fn>
+    <no-break><pageref|auto-13><vspace|0.5fn>
 
     <with|par-left|3fn|Jeu de la vie <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-13>>
-
-    <with|par-left|3fn|Flocking birds <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-14>>
 
-    <with|par-left|3fn|Vaches et herbes <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|3fn|Flocking birds <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-15>>
 
-    <with|par-left|3fn|Guardes, voleurs et trésors
-    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <with|par-left|3fn|Vaches et herbe <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
     <no-break><pageref|auto-16>>
+
+    <with|par-left|3fn|Gardes, voleurs et trésors
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-17>>
 
     <vspace*|1fn><\with|font-series|bold|math-font-series|bold>
       Variation de paramètres
     </with> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-17><vspace|0.5fn>
+    <no-break><pageref|auto-18><vspace|0.5fn>
+
+    <with|par-left|1.5fn|Flocking birds <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-19>>
+
+    <with|par-left|1.5fn|Gardes, voleurs et trésors
+    <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+    <no-break><pageref|auto-20>>
 
     <vspace*|1fn><with|font-series|bold|math-font-series|bold|Conclusion>
     <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-    <no-break><pageref|auto-18><vspace|0.5fn>
+    <no-break><pageref|auto-24><vspace|0.5fn>
   </table-of-contents>
 
   <page-break*><section|Introduction>
@@ -468,11 +479,46 @@
     Variation de paramètres
   </section>
 
-  <paragraph|Flocking birds>
+  <subsection|Flocking birds>
 
-  <subsubsection|Gardes, voleurs et trésors>
+  <subsection|Gardes, voleurs et trésors>
+
+  Regardons plus en détail l'astuce permettant d'éviter des boucles
+  infernales.
+
+  Lors de la course poursuite, il ne faut surtout pas dépasser le voleur,
+  sinon il va se mettre à tourner très fortement. Pour éviter cela, il faut
+  que le garde décelère lorsqu'il est à une case du voleur (étant donné que
+  le garde en course poursuite avance d'une case par itération). Nous avons
+  décidé de le faire avancer de la distance qui le sépare du voleur, moins
+  une certaine quantité fixe, le tout restant scrupuleusement borné entre 0
+  et 1. On a donc :
+
+  <\equation*>
+    <with|mode|text|<em|speed>> = min<left|(>1.00, \ max<left|(><rsub|>0.00,
+    \ <with|mode|text|<em|distance>>-\<varepsilon\><right|)><right|)>
+  </equation*>
+
+  Voici les différents résultats obtenus pour des valeurs de
+  <math|\<varepsilon\>> comprises entre 0 et 1 :
+
+  <big-figure||>
+
+  <big-figure||>
+
+  <big-figure||>
 
   <section|Conclusion>
+
+  Si nous n'avons pas spécialement mis l'accent sur la beauté des images
+  générées, nous avons surtout cherché à créer une architecture extrêmement
+  modulaire et riche en fonctionnalités, tout en gardant de bonnes
+  performances malgré l'utilisation d'un langage interprété.
+
+  Notre projet est libre et disponible sous licence BSD. Nous espéront que
+  cette disponibilité libre ainsi que la modularité et la multitude de
+  fonctionnalités intéresseront d'autres personnes à la recherche d'une
+  plateforme de simulation ou d'art numérique !
 </body>
 
 <\initial>
@@ -497,12 +543,13 @@
     <associate|auto-16|<tuple|4.0.8|5>>
     <associate|auto-17|<tuple|4.0.9|6>>
     <associate|auto-18|<tuple|5|7>>
-    <associate|auto-19|<tuple|5.0.9.1|7>>
+    <associate|auto-19|<tuple|5.1|7>>
     <associate|auto-2|<tuple|2|2>>
-    <associate|auto-20|<tuple|5.0.10|?>>
-    <associate|auto-21|<tuple|6|?>>
-    <associate|auto-22|<tuple|5.0.11|?>>
-    <associate|auto-23|<tuple|6|?>>
+    <associate|auto-20|<tuple|5.2|7>>
+    <associate|auto-21|<tuple|1|7>>
+    <associate|auto-22|<tuple|2|7>>
+    <associate|auto-23|<tuple|3|7>>
+    <associate|auto-24|<tuple|6|7>>
     <associate|auto-3|<tuple|3|2>>
     <associate|auto-4|<tuple|3.1|2>>
     <associate|auto-5|<tuple|3.1.1|2>>
@@ -515,6 +562,13 @@
 
 <\auxiliary>
   <\collection>
+    <\associate|figure>
+      <tuple|normal||<pageref|auto-21>>
+
+      <tuple|normal||<pageref|auto-22>>
+
+      <tuple|normal||<pageref|auto-23>>
+    </associate>
     <\associate|toc>
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Introduction>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
@@ -587,9 +641,17 @@
       </with> <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
       <no-break><pageref|auto-18><vspace|0.5fn>
 
+      <with|par-left|<quote|1.5fn>|Flocking birds
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-19>>
+
+      <with|par-left|<quote|1.5fn>|Gardes, voleurs et trésors
+      <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
+      <no-break><pageref|auto-20>>
+
       <vspace*|1fn><with|font-series|<quote|bold>|math-font-series|<quote|bold>|Conclusion>
       <datoms|<macro|x|<repeat|<arg|x>|<with|font-series|medium|<with|font-size|1|<space|0.2fn>.<space|0.2fn>>>>>|<htab|5mm>>
-      <no-break><pageref|auto-19><vspace|0.5fn>
+      <no-break><pageref|auto-24><vspace|0.5fn>
     </associate>
   </collection>
 </auxiliary>
