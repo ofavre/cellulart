@@ -199,6 +199,9 @@
 
   <subsection|Modules>
 
+  Nous allons maintenant décrire plus en détail la manière dont chaque module
+  fonctionne.
+
   <subsubsection|Matrices>
 
   Elles ont toutes la même dimension que le monde lui même, mais leur type de
@@ -347,6 +350,55 @@
   touffes qu'elles viennent de traverser.
 
   <subsubsection|Gardes, voleurs et trésors>
+
+  Une des premières et des plus jolies démonstrations que nous avons
+  implémentées simule un mode avec quelques trésors qui attirent les
+  convoitises de quelques voleurs, mais surveillés par un bon nombre de
+  gardes.
+
+  Les trésors sont des objets dont la valeur se limitent à leur coordonnées,
+  car il sont censés être placés dans le monde. Les fonctions de trésors ne
+  font que dessiner ou cacher le pixel coloré jaune qui marque leur position.
+  Le fait que leur valeur soit égale à leur coordonnées nous permet surtout
+  de pouvoir faire une recherche locale.
+
+  Un voleur se dirige, lentement, en marchant, vers le trésor le plus proche.
+  Il se ballade aléatoirement si aucun n'est en vue dans un rayon de 50
+  cases. Une fois que le voleur passe sur le trésor, il le ramasse -- le
+  supprime du monde -- et prend les jambes à son coup pour entâmer une folle
+  course poursuite ! Un voleur en fuite cherche à éviter les 5 gardes les
+  plus proches de lui, dans un rayon de 20 cases. Il évite leur position
+  moyenne, pondérée par leur rapprochement.
+
+  Les gardes quant à eux marchent aléatoirement, au milieu des passants --
+  les voleurs qui ont encore les mains vides (distinction faite en observant
+  l'état des agents voisins). Lorsqu'un garde aperçoit un voleur, dans un
+  rayon de 50 cases, il fonce vers lui pour le rattraper. S'il en voit
+  plusieurs il se dirige vers le plus proche. Si le garde se trouve à moins
+  d'une case du voleur, il lui prend le trésor (en modifiant l'état du voleur
+  qui se remet alors à marcher). Une fois qu'un garde a confisqué un trésor,
+  il trotine et cherche à s'éloigner le plus possible des passants -- des
+  voleurs potentiels -- et dépose le trésor (en recrée un nouveau avec ses
+  nouvelles coordonnées) si personne n'est à moins de 50 cases. Une fois le
+  trésor reposé, il recommence à marcher et peut recommencer à scruter les
+  horizons pour voir un éventuel voleur.
+
+  Afin de faire un joli rendu, nous avons attribué une couleur à chaque
+  garde, et nous avons fait en sorte qu'il laisse une trace colorée lorsqu'il
+  se met à courses un voleur. On observe alors un regroupement de plusieurs
+  lignes lors du début d'une course poursuite. Lors de virages serrés
+  (lorsqu'un garde libre s'interpose devant un voleur) les lignes se
+  déserrent. Il arrive également qu'une ligne passe d'un faisceau à un autre,
+  quand deux courses poursuites se croisent.
+
+  Nous avons rencontré un problème lors de cette démonstration : les agents
+  ne pouvant pas réguler leur vitesse, certains se retrouvaient à tourner
+  sans cesses autour du même point. Par exemple un voleur ayant un mauvais
+  angle d'arrivée vers un trésor (ne venant pas de tout droit), va se mettre
+  à tourner autours, comme s'il gravitait. Quelques fois, et c'était plus
+  embêtant à cause de la trace, les gardes et le voleur tournaient en rond
+  sur eux mêmes, souvent jusqu'à ce qu'un nouveau garde vienne \S casser la
+  boucle \T.
 
   <\section>
     Variation de paramètres
