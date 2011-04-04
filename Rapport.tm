@@ -290,9 +290,63 @@
 
   <subsubsection|Flocking birds>
 
-  <subsubsection|Vaches et herbes>
+  <subsubsection|Vaches et herbe>
 
-  <subsubsection|Guardes, voleurs et trésors>
+  Afin de tester un autre automate cellulaire de notre conception et le
+  moteur de requêtes, ainsi que la recherche locale dans des matrices, nous
+  avons implémenté une autre démonstration. Cette démonstration était
+  également l'occasion de créer une intéraction entre un automate cellulaire
+  et les systèmes multi-agents
+
+  Premièrement, l'automate cellulaire a été pense de façon à faire des formes
+  rondes, et pleines. Ainsi une cellule survit si au moins 3 de ses voisins
+  sont vivants, et une cellule naît si au moins 5 de ses voisins sont
+  vivants. Ceci fait des petites \S tâches d'huile \T, que nous avons plutôt
+  interprété comme des touffes d'herbe. Cet automate cellulaire est très très
+  stable, et il faut un minimum de 4 cellules en carré pour qu'un paquet
+  survive.
+
+  Sur cette prairie, des vaches viennent brouter. Si elles voient de la
+  nourriture dans un rayon de 4 cases, elles s'y dirigent. Dans le cas
+  contraire elle cherchent à se diriger vers la zone la plus dense en herbe
+  dans un rayon de 4 zones de 8 cases sur 8 cases (détails plus loin). S'il
+  n'y a pas d'herbe en vue dans ce périmètre, la vache avance aléatoirement.
+  De plus, dans tous ses déplacements, la vache s'écarte un peu de ses
+  voisines dans un rayon de 5 cases, sans pour autant aller faire des virages
+  à 180<degreesign> car elle se limite à des ajustements de 30<degreesign>
+  par itération.
+
+  Ainsi, une vache effectue une recherche locale dans une matrice, en
+  recherchant la case la plus proche possédant de l'herbe. Ceci est fait par
+  un percept.
+
+  Mais une vache effectue également une recherche de <em|densité>. Cette
+  dernière a été implémentée en réduisant par 8 la taille de la matrice
+  d'herbe, de manière à délimiter des zones de 8 cases par 8 cases dont la
+  valeur est le nombre de cases d'herbe vivantes dans la zone. Cette étape
+  n'est réalisée qu'une fois par itération, grâce au moteur de requêtes.
+  Après réduction, chaque vache va réaliser une recherche locale pour la zone
+  avec la plus grande valeur dans un rayon de 4 zones. Cette recherche est
+  plus semblable au percepts décrit précédement, mais se fait au sein du
+  moteur de requête. Il est important de noter que la résolution de la
+  réponse retournée est limitée à la taille des zones décrites, dont on
+  retourne le centre.
+
+  La réalisation fonctionne comme prévu, mais à cause des faibles ajustement
+  de direction, il n'est pas rare qu'une vache passe juste à côté d'une case
+  d'herbe, ou se rapproche beaucoup plus de sa voisine que ce que le rayon de
+  recherche suggérait. D'un autre côté, la diminution de la densité d'agents
+  autonomes est difficile, surtout quand tous les agents se dirigent vers la
+  même direction !
+
+  En rajoutant aux vaches une trace qui s'évapore un peu, on remarque
+  qu'elles redessinent des bouts des zones qu'elles broutent, en s'attaquant
+  par les bords. En effet, le centre d'une touffe repousse instantanément, et
+  la vache n'a aucune raison de tourner dans un sens plutôt que dans un
+  autre. De ce fait les vaches passent plus de temps à revenir aux bords des
+  touffes qu'elles viennent de traverser.
+
+  <subsubsection|Gardes, voleurs et trésors>
 
   <\section>
     Variation de paramètres
