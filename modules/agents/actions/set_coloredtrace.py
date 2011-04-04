@@ -6,8 +6,8 @@ required_matrices = ['coloredtrace']
 
 
 
-def color_mix(colorSrc, colorDst, dstAlpha):
-    return tuple([colorDst[i]*dstAlpha + colorSrc[i]*(1-dstAlpha) for i in xrange(4)])
+def color_mix_rgba(colorSrc, colorDst, dstAlpha):
+    return tuple([max(0,min(255, colorDst[i]*dstAlpha + colorSrc[i]*(1-dstAlpha) )) for i in xrange(4)])
 
 def run(name, world, matrices, states, y=None, x=None, color=None, opacity=1.0):
     if color == None:
@@ -35,7 +35,7 @@ def run(name, world, matrices, states, y=None, x=None, color=None, opacity=1.0):
     else:
         dy = -1
     matrice = matrices['coloredtrace']
-    matrice[iy,   ix   ] = color_mix(matrice[iy,   ix   ], color, (ry+0.5)*(rx+0.5)*opacity)
-    matrice[iy,   ix+dx] = color_mix(matrice[iy,   ix+dx], color, (ry+0.5)*(0.5-rx)*opacity)
-    matrice[iy+dy,ix   ] = color_mix(matrice[iy+dy,ix   ], color, (0.5-ry)*(rx+0.5)*opacity)
-    matrice[iy+dy,ix+dx] = color_mix(matrice[iy+dy,ix+dx], color, (0.5-ry)*(0.5-rx)*opacity)
+    matrice[iy,   ix   ] = color_mix_rgba(matrice[iy,   ix   ], color, (ry+0.5)*(rx+0.5)*opacity)
+    matrice[iy,   ix+dx] = color_mix_rgba(matrice[iy,   ix+dx], color, (ry+0.5)*(0.5-rx)*opacity)
+    matrice[iy+dy,ix   ] = color_mix_rgba(matrice[iy+dy,ix   ], color, (0.5-ry)*(rx+0.5)*opacity)
+    matrice[iy+dy,ix+dx] = color_mix_rgba(matrice[iy+dy,ix+dx], color, (0.5-ry)*(0.5-rx)*opacity)

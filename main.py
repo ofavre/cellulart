@@ -76,6 +76,9 @@ elif demo == 'thefts and guards':
     world.create_matrix("pixels")
     world.create_matrix("coloredtrace")
 
+    # Add a named module cellular automaton
+    world.create_cellularautomaton("evaporate_coloredtrace")
+
     # Add agents
     world.create_agents("treasure_theft", 50)
     world.create_agents("treasure_guard", 100)
