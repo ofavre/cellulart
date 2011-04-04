@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# License: See LICENSE file.
 
 required_states = ['position']
 required_matrices = ['pixels']

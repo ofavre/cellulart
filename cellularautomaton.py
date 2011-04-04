@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# License: See LICENSE file.
 
 class CellularAutomaton(object):
     """Represents a cellular automaton, with a method to update over a given cell."""

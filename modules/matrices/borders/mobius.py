@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# License: See LICENSE file.
 
 def border_check(shape,x,y):
     xq = int(x / shape[1])

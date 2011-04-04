@@ -1,5 +1,6 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# License: See LICENSE file.
 
 from world import *
 from maingui import *

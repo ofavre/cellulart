@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# License: See LICENSE file.
 
 class Agent(object):
     """Represents an agent, with a bunch of brains."""
